@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Untitled</title>
+<title>Netflix Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Untitled</h1>
+<h1 class="title">Netflix Analysis</h1>
   <div class="quarto-categories">
     <div class="quarto-category">R</div>
   </div>
@@ -364,17 +364,15 @@ Figure&nbsp;2: Cumulative Views Plot
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">'75% of all views are captured by ~25% of the Netflix show library'</span>,</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">subtitle =</span> <span class="st">'The remaining 75% of the library captures only 25% of views'</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>         )<span class="sc">+</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">label =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>())<span class="sc">+</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">label =</span> scales<span class="sc">::</span><span class="fu">label_comma</span>())<span class="sc">+</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> .<span class="dv">75</span>, <span class="at">linetype =</span> <span class="st">'dashed'</span>, <span class="at">color =</span> <span class="st">'gray8'</span>)<span class="sc">+</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">'inside'</span>,</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.width =</span> <span class="fu">unit</span>(<span class="dv">10</span>, <span class="st">'mm'</span>),</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position.inside =</span> <span class="fu">c</span>(.<span class="dv">9</span>, .<span class="dv">15</span>)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">+</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_log10</span>()<span class="sc">+</span> </span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_log10</span>()</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co">#ggsave("logged_plot.png", logged_plot, width = 10, height = 8)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> .<span class="dv">75</span>, <span class="at">linetype =</span> <span class="st">'dashed'</span>, <span class="at">color =</span> <span class="st">'gray8'</span>)<span class="sc">+</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">'inside'</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.width =</span> <span class="fu">unit</span>(<span class="dv">10</span>, <span class="st">'mm'</span>),</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position.inside =</span> <span class="fu">c</span>(.<span class="dv">9</span>, .<span class="dv">15</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">+</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_log10</span>(<span class="at">label =</span> scales<span class="sc">::</span><span class="fu">label_comma</span>())<span class="sc">+</span> </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_log10</span>(<span class="at">label =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>())</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"logged_plot.png"</span>, logged_plot, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div id="fig-three" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
@@ -467,7 +465,7 @@ Figure&nbsp;4: Comparing Cumulative Viewing vs ECDF Plots
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>comparison_plot_logged <span class="ot">&lt;-</span> (full_shows_ecdf_comp_logged <span class="sc">+</span> ecdf_log_plot)<span class="sc">+</span></span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_annotation</span>(<span class="at">tag_levels =</span> <span class="st">"A"</span>, <span class="at">tag_prefix =</span> <span class="st">"("</span>, <span class="at">tag_suffix =</span> <span class="st">")"</span>) <span class="sc">&amp;</span> <span class="fu">theme</span>(<span class="at">plot.tag.position =</span> <span class="st">'bottom'</span>) </span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">'comparison_plot_logged.png'</span>, comparison_plot_logged, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co"># ggsave('comparison_plot_logged.png', comparison_plot_logged, width = 10, height = 8)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div id="fig-five" class="lightbox quarto-float quarto-figure quarto-figure-center anchored">
@@ -485,14 +483,22 @@ Figure&nbsp;5: Comparing Cumulative Viewing vs ECDF Plots, logged
 </section>
 <section id="how-does-viewing-change-across-reports" class="level2">
 <h2 class="anchored" data-anchor-id="how-does-viewing-change-across-reports">How Does Viewing Change Across Reports?</h2>
-<p>Now on to question two: How does viewing of shows change across the four reports in the dataset? This is a fairly broad question so I’m going to break it into four subquestions to address:</p>
+<p>Now on to my second question: How does viewing of shows change across the four reports in the dataset? This is a fairly broad question so I’m going to break it into four subquestions to address:</p>
 <ol type="1">
 <li>How does a shows viewership decay over the four reporting periods? Does a show(or season of a show) steadily lose views every reporting period or is viewership resiliant over time?</li>
-<li></li>
+<li>TODO</li>
 </ol>
 <section id="how-do-show-views-change-across-reports" class="level3">
 <h3 class="anchored" data-anchor-id="how-do-show-views-change-across-reports">How Do Show Views Change Across Reports?</h3>
-<p>For this first section, the question is how views change across the four reporting periods. I want to be able to look at a show and say ‘is this show viewed more or less than in the previous report’? Say we are looking at Stranger Things. One way to do this might be to lump all the Stranger Things seasons together and see how the total views compare to the previous reporting period.</p>
+<p>My first question concerns how views change longitudinally across the four reporting periods. I’m going to examine this from three angles:</p>
+<ul>
+<li>First, I want to select a couple popular shows and see how their views have flucuated over the four reports</li>
+<li>Second, I want to limit the question to limited series and see how those one-off shows perform over time</li>
+<li>Third, I want to lump shows together by their season number and see if perhaps later seasons experience higher dropoff than earlier seasons</li>
+</ul>
+<section id="popular-shows" class="level4">
+<h4 class="anchored" data-anchor-id="popular-shows">Popular Shows</h4>
+<p>-Total Show views X report date: Sum views of all show seasons by each report period -Total Show views X report date and contains_new_season: Sum views of all show seasons by each report period and whether contains_new_season = TRUE -Show views X report date, season-for single/two shows: Views for each season of each show -Show Views X season</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -502,696 +508,319 @@ Figure&nbsp;5: Comparing Cumulative Viewing vs ECDF Plots, logged
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">n_distinct</span>(report_date) <span class="sc">==</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>stranger_things_dropoff <span class="ot">&lt;-</span> multi_report_shows <span class="sc">|&gt;</span> </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, season) <span class="sc">|&gt;</span> </span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(report_date)  <span class="sc">|&gt;</span> </span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">subsequent_report_dropoff =</span> (views <span class="sc">-</span> <span class="fu">lag</span>(views, <span class="dv">1</span>))<span class="sc">/</span><span class="fu">lag</span>(views, <span class="dv">1</span>) <span class="sc">*</span><span class="dv">100</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>stranger_things_dropoff <span class="sc">|&gt;</span> </span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, season) <span class="sc">|&gt;</span> </span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">contains_new_season =</span> <span class="fu">case_when</span>(</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>                                    new_release <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"New Season"</span>, <span class="st">"New Season Lift"</span>) <span class="sc">~</span> <span class="cn">TRUE</span>,</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">.default =</span> <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(series <span class="sc">==</span> <span class="st">'Stranger Things'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(report_date) <span class="sc">|&gt;</span> </span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">avg_dropoff =</span> <span class="fu">mean</span>(subsequent_report_dropoff)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">format_table_header</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">format_table_numbers</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="do">### sum total of show views(all seasons) each report</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>multi_report_shows <span class="sc">|&gt;</span> </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">startsWith</span>(title,<span class="st">'You:'</span>) <span class="sc">|</span> series <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'Stranger Things'</span>, <span class="st">'Breaking Bad'</span>, <span class="st">'Seinfeld'</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_views =</span> <span class="fu">sum</span>(views)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">subsequent_report_dropoff =</span> (total_views <span class="sc">-</span> <span class="fu">lag</span>(total_views, <span class="dv">1</span>))<span class="sc">/</span><span class="fu">lag</span>(total_views, <span class="dv">1</span>) <span class="sc">*</span><span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="sc">-</span>total_views, <span class="at">names_from =</span> series, <span class="at">values_from =</span> subsequent_report_dropoff) <span class="sc">|&gt;</span> </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_table_header</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_table_numbers</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_table_style</span>() </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>multi_report_shows <span class="sc">|&gt;</span> </span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, season) <span class="sc">|&gt;</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">contains_new_season =</span> <span class="fu">case_when</span>(</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>                                    new_release <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"New Season"</span>, <span class="st">"New Season Lift"</span>) <span class="sc">~</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">.default =</span> <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">startsWith</span>(title,<span class="st">'You:'</span>) <span class="sc">|</span> series <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'Stranger Things'</span>, <span class="st">'Breaking Bad'</span>, <span class="st">'Seinfeld'</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">total_views =</span> <span class="fu">sum</span>(views)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">subsequent_report_dropoff =</span> (total_views <span class="sc">-</span> <span class="fu">lag</span>(total_views, <span class="dv">1</span>))<span class="sc">/</span><span class="fu">lag</span>(total_views, <span class="dv">1</span>) <span class="sc">*</span><span class="dv">100</span>)</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="sc">-</span>total_views, <span class="at">names_from =</span> series, <span class="at">values_from =</span> subsequent_report_dropoff) <span class="sc">|&gt;</span> </span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">format_table_header</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">format_table_numbers</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">format_table_style</span>() </span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>viewer_decay <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">by_series =</span> <span class="cn">TRUE</span>){</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(by_series){</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># data is filtered before reaching this function step</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># prepare data and calculate total views and new_season logical flag</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>    working_df <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> </span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>      <span class="co"># data should be ungrouped coming into this function, but explicitly ungroup for safety</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">contains_new_season =</span> <span class="fu">case_when</span>(</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>                                    new_release <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"New Season"</span>, <span class="st">"New Season Lift"</span>) <span class="sc">~</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">.default =</span> <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">total_views =</span> <span class="fu">sum</span>(views, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>                <span class="at">contains_new_season =</span> <span class="fu">any</span>(contains_new_season), <span class="co"># logical flag per series per report_date</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>                <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrange</span>(series, report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">dropoff =</span> (total_views <span class="sc">-</span> <span class="fu">lag</span>(total_views, <span class="dv">1</span>))<span class="sc">/</span><span class="fu">lag</span>(total_views, <span class="dv">1</span>) <span class="sc">*</span><span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrange</span>(report_date)</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>    <span class="co"># # build view decay table body</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>    <span class="co"># decay_data &lt;- working_df |&gt; </span></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   select(series, report_date, dropoff) |&gt; </span></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   pivot_wider(names_from = series, values_from = dropoff)</span></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># # build conditional formatting table</span></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># conditional_formatting_data &lt;- working_df |&gt; </span></span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   select(series, report_date, contains_new_season) |&gt; </span></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   pivot_wider(names_from = series, values_from = contains_new_season)</span></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>    nested_data <span class="ot">&lt;-</span> working_df <span class="sc">|&gt;</span> </span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrange</span>(report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>      <span class="fu">nest</span>()</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>    base_table <span class="ot">&lt;-</span> working_df <span class="sc">|&gt;</span> </span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(report_date, series, dropoff) <span class="sc">|&gt;</span> </span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> series, <span class="at">values_from =</span> dropoff) <span class="sc">|&gt;</span> </span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>      <span class="fu">gt</span>()</span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>    <span class="fu">reduce</span>(</span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>      nested_data<span class="sc">$</span>series,</span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>      <span class="at">.init =</span> base_table,</span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(gt_obj, current_series){</span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>        <span class="co">#extract logical information</span></span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>        formatting <span class="ot">&lt;-</span> nested_data <span class="sc">|&gt;</span> </span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>          <span class="fu">filter</span>(series <span class="sc">==</span> current_series) <span class="sc">|&gt;</span> </span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>          <span class="fu">pull</span>(data) <span class="sc">|&gt;</span> </span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>          <span class="fu">pluck</span>(<span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>          <span class="fu">pull</span>(contains_new_season)</span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>        <span class="co">#apply formatting</span></span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>        <span class="fu">tab_style</span>(</span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a>          gt_obj,</span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">'yellow'</span>, <span class="at">alpha =</span> .<span class="dv">5</span>),</span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>          <span class="at">locations =</span> <span class="fu">cells_body</span>(</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a>            <span class="at">columns =</span> <span class="fu">all_of</span>(current_series),</span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a>            <span class="at">rows =</span> formatting</span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">format_table_header</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a>    <span class="fu">format_table_numbers</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a>    <span class="fu">format_table_style</span>() </span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a>multi_report_shows <span class="sc">|&gt;</span> </span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">startsWith</span>(title,<span class="st">'You:'</span>) <span class="sc">|</span> series <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'Stranger Things'</span>, <span class="st">'Breaking Bad'</span>, <span class="st">'Seinfeld'</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">viewer_decay</span>() </span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a><span class="co"># gtsave()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display">
-<div id="mbudquozbc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#mbudquozbc table {
-  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#mbudquozbc thead, #mbudquozbc tbody, #mbudquozbc tfoot, #mbudquozbc tr, #mbudquozbc td, #mbudquozbc th {
-  border-style: none;
-}
-
-#mbudquozbc p {
-  margin: 0;
-  padding: 0;
-}
-
-#mbudquozbc .gt_table {
-  display: table;
-  border-collapse: collapse;
-  line-height: normal;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_caption {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-#mbudquozbc .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#mbudquozbc .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 3px;
-  padding-bottom: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#mbudquozbc .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#mbudquozbc .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#mbudquozbc .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#mbudquozbc .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#mbudquozbc .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#mbudquozbc .gt_spanner_row {
-  border-bottom-style: hidden;
-}
-
-#mbudquozbc .gt_group_heading {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  text-align: left;
-}
-
-#mbudquozbc .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#mbudquozbc .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#mbudquozbc .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#mbudquozbc .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#mbudquozbc .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#mbudquozbc .gt_stub_row_group {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-  vertical-align: top;
-}
-
-#mbudquozbc .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#mbudquozbc .gt_row_group_first th {
-  border-top-width: 2px;
-}
-
-#mbudquozbc .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#mbudquozbc .gt_first_summary_row {
-  border-top-style: solid;
-  border-top-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#mbudquozbc .gt_last_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#mbudquozbc .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_last_grand_summary_row_top {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: double;
-  border-bottom-width: 6px;
-  border-bottom-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#mbudquozbc .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#mbudquozbc .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#mbudquozbc .gt_sourcenote {
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#mbudquozbc .gt_left {
-  text-align: left;
-}
-
-#mbudquozbc .gt_center {
-  text-align: center;
-}
-
-#mbudquozbc .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#mbudquozbc .gt_font_normal {
-  font-weight: normal;
-}
-
-#mbudquozbc .gt_font_bold {
-  font-weight: bold;
-}
-
-#mbudquozbc .gt_font_italic {
-  font-style: italic;
-}
-
-#mbudquozbc .gt_super {
-  font-size: 65%;
-}
-
-#mbudquozbc .gt_footnote_marks {
-  font-size: 75%;
-  vertical-align: 0.4em;
-  position: initial;
-}
-
-#mbudquozbc .gt_asterisk {
-  font-size: 100%;
-  vertical-align: 0;
-}
-
-#mbudquozbc .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#mbudquozbc .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#mbudquozbc .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#mbudquozbc .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#mbudquozbc .gt_indent_5 {
-  text-indent: 25px;
-}
-
-#mbudquozbc .katex-display {
-  display: inline-flex !important;
-  margin-bottom: 0.75em !important;
-}
-
-#mbudquozbc div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
-  height: 0px !important;
-}
-</style>
-
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
-<thead>
-<tr class="gt_col_headings header">
-<th id="report_date" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="font-weight: bold; text-transform: capitalize" scope="col">report_date</th>
-<th id="avg_dropoff" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="font-weight: bold; text-transform: capitalize" scope="col">avg_dropoff</th>
-</tr>
-</thead>
-<tbody class="gt_table_body">
-<tr class="odd">
-<td class="gt_row gt_center" headers="report_date">2023-12-31</td>
-<td class="gt_row gt_right" headers="avg_dropoff">NA</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_center" headers="report_date">2024-06-30</td>
-<td class="gt_row gt_right" headers="avg_dropoff">16.93</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_center" headers="report_date">2024-12-31</td>
-<td class="gt_row gt_right" headers="avg_dropoff">2.19</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_center" headers="report_date">2025-06-30</td>
-<td class="gt_row gt_right" headers="avg_dropoff">27.32</td>
-</tr>
-</tbody>
-</table>
-
 </div>
-</div>
-</div>
+</section>
+<section id="limited-series" class="level4">
+<h4 class="anchored" data-anchor-id="limited-series">Limited Series</h4>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Seasonal Dropoff</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>test_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(season <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Season 1"</span>, <span class="st">"Season 2"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">sum</span>(new_release <span class="sc">==</span> <span class="st">'New Season'</span>) <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(new_release <span class="sc">==</span> <span class="st">"New Season"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(report_date) <span class="sc">|&gt;</span> </span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">second_season_dropoff =</span> (views <span class="sc">-</span> <span class="fu">lag</span>(views, <span class="dv">1</span>))<span class="sc">/</span><span class="fu">lag</span>(views, <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(second_season_dropoff)) <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="do">## Shows with high retention without new season influx of viewers</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>test_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(new_release <span class="sc">!=</span> <span class="st">'New Season Lift'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">mean_by_new_release =</span> <span class="fu">mean</span>(views), <span class="at">.by =</span> <span class="fu">c</span>(series, new_release)) <span class="sc">|&gt;</span> </span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> new_release, <span class="at">values_from =</span> mean_by_new_release) <span class="sc">|&gt;</span> </span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">na.omit</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">maintenance_to_new_release_ratio =</span> Maintenance<span class="sc">/</span><span class="st">`</span><span class="at">New Season</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(test_shows <span class="sc">|&gt;</span> <span class="fu">select</span>(show_type), <span class="at">by =</span> <span class="fu">join_by</span>(series)) <span class="sc">|&gt;</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>() <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="do">## Shows in maintenance with high retention that appear in all 4 report periods</span></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>test_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">all</span>(new_release <span class="sc">==</span> <span class="st">'Maintenance'</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">n_distinct</span>(report_date) <span class="sc">==</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span> </span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">mean_views =</span> <span class="fu">mean</span>(views)) <span class="sc">|&gt;</span> </span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">change_from_last_report =</span> (mean_views <span class="sc">-</span> <span class="fu">lag</span>(mean_views))<span class="sc">/</span><span class="fu">lag</span>(mean_views),</span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>            <span class="at">first_last_report_change =</span> (mean_views <span class="sc">-</span> <span class="fu">lag</span>(mean_views, <span class="dv">3</span>))<span class="sc">/</span><span class="fu">lag</span>(mean_views, <span class="dv">3</span>)) <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">avg_drop_between_reports =</span> <span class="fu">mean</span>(change_from_last_report, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>              <span class="at">max_drop_between_reports =</span> <span class="fu">max</span>(change_from_last_report, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="ot">&lt;-</span> shows_with_seasons <span class="sc">|&gt;</span> </span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">total_seasons =</span> <span class="fu">max</span>(season_number),</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>           <span class="at">report_date =</span> <span class="fu">as.factor</span>(report_date),</span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>           <span class="at">season_number =</span> <span class="fu">as.integer</span>(season_number)) <span class="sc">|&gt;</span></span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">max</span>(season_number) <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">n_distinct</span>(report_date) <span class="sc">==</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span> </span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">new_release =</span> <span class="fu">case_when</span>(</span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>           days_since_release <span class="sc">&lt;</span> <span class="dv">182</span> <span class="sc">~</span> <span class="st">'New Season'</span>,</span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>           <span class="fu">any</span>(days_since_release <span class="sc">&lt;</span> <span class="dv">182</span>) <span class="sc">~</span> <span class="st">'New Season Lift'</span>,</span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>           <span class="at">.default =</span> <span class="st">'Maintenance'</span></span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>    ))</span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>single_season_shows <span class="ot">&lt;-</span> shows_with_seasons <span class="sc">|&gt;</span> </span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">total_seasons =</span> <span class="fu">max</span>(season_number),</span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>           <span class="at">report_date =</span> <span class="fu">as.factor</span>(report_date),</span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>           <span class="at">season_number =</span> <span class="fu">as.integer</span>(season_number)) <span class="sc">|&gt;</span></span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">max</span>(season_number) <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">n_distinct</span>(report_date) <span class="sc">==</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span> </span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">new_release =</span> <span class="fu">case_when</span>(</span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>           days_since_release <span class="sc">&lt;</span> <span class="dv">182</span> <span class="sc">~</span> <span class="st">'New Season'</span>,</span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>           <span class="fu">any</span>(days_since_release <span class="sc">&lt;</span> <span class="dv">182</span>) <span class="sc">~</span> <span class="st">'New Season Lift'</span>,</span>
-<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>           <span class="at">.default =</span> <span class="st">'Maintenance'</span></span>
-<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>    ))</span>
-<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>maintenance_shows <span class="ot">&lt;-</span> multi_season_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
-<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">any</span>(new_release <span class="sc">==</span> <span class="st">'New Season'</span>))</span>
-<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>new_release_shows <span class="ot">&lt;-</span> multi_season_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
-<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(new_release <span class="sc">==</span> <span class="st">"New Season"</span>)</span>
-<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a>bump_shows <span class="ot">&lt;-</span> multi_season_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
-<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(new_release <span class="sc">==</span> <span class="st">'New Season Lift'</span>)</span>
-<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> multi_season_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(season <span class="sc">==</span> <span class="st">'Season 9'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(new_release) <span class="sc">|&gt;</span> </span>
-<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">avg_views =</span> <span class="fu">mean</span>(views)) </span>
-<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>calc_new_season_bump <span class="ot">&lt;-</span> <span class="cf">function</span>(data, season){</span>
-<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>    season_num <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">'Season '</span>, {{season}})</span>
-<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a>    avg_by_release_type <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> </span>
-<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(season <span class="sc">==</span> season_num) <span class="sc">|&gt;</span> </span>
-<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a>        <span class="fu">group_by</span>(new_release) <span class="sc">|&gt;</span> </span>
-<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a>        <span class="fu">summarise</span>(<span class="at">avg_views =</span> <span class="fu">mean</span>(views))</span>
-<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a>    (avg_by_release_type[avg_by_release_type<span class="sc">$</span>new_release <span class="sc">==</span> <span class="st">'New Season Lift'</span>,]<span class="sc">$</span>avg_views <span class="sc">-</span> avg_by_release_type[avg_by_release_type<span class="sc">$</span>new_release <span class="sc">==</span> <span class="st">'Maintenance'</span>,]<span class="sc">$</span>avg_views) <span class="sc">/</span> avg_by_release_type[avg_by_release_type<span class="sc">$</span>new_release <span class="sc">==</span> <span class="st">'Maintenance'</span>,]<span class="sc">$</span>avg_views</span>
-<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span><span class="dv">12</span> <span class="sc">|&gt;</span> </span>
-<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a>    <span class="fu">map_dbl</span>(\(x) <span class="fu">calc_new_season_bump</span>(multi_season_shows, x))</span>
-<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span></span>
-<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span>    </span>
-<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(season_number) <span class="sc">|&gt;</span> </span>
-<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">percent_change =</span> (views <span class="sc">-</span> <span class="fu">lag</span>(views, <span class="dv">1</span>))<span class="sc">/</span><span class="fu">lag</span>(views, <span class="dv">1</span>) <span class="sc">*</span><span class="dv">100</span>) <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
-<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(series <span class="sc">==</span> <span class="st">'Cobra Kai'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> season_number, <span class="at">y =</span> views, <span class="at">group =</span> report_date, <span class="at">color =</span> report_date))<span class="sc">+</span></span>
-<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">comma_format</span>())</span>
-<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>    <span class="co">#filter(series == 'Black Mirror') |&gt; </span></span>
-<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date, <span class="at">y =</span> views, <span class="at">group =</span> season, <span class="at">color =</span> season))<span class="sc">+</span></span>
-<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">comma_format</span>())</span>
-<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a>maintenance_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, season) <span class="sc">|&gt;</span> </span>
-<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date, <span class="at">y =</span> views, <span class="at">color =</span> series))<span class="sc">+</span></span>
-<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">comma_format</span>())<span class="sc">+</span></span>
-<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span>
-<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span> </span>
-<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a>    <span class="co"># filter(series == 'Sex Education') |&gt; </span></span>
-<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date, <span class="at">y =</span> views))<span class="sc">+</span></span>
-<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
-<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> season_number)<span class="sc">+</span></span>
-<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">comma_format</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>multi_report_dropoff <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season <span class="sc">==</span> <span class="st">'Limited Series'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_dropoff =</span> <span class="fu">median</span>(subsequent_report_dropoff))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(new_release <span class="sc">==</span> <span class="st">"New Season"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(series) <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span> </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, season) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Seasonal Dropoff</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>test_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(season <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Season 1"</span>, <span class="st">"Season 2"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">sum</span>(new_release <span class="sc">==</span> <span class="st">'New Season'</span>) <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(new_release <span class="sc">==</span> <span class="st">"New Season"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">second_season_dropoff =</span> (views <span class="sc">-</span> <span class="fu">lag</span>(views, <span class="dv">1</span>))<span class="sc">/</span><span class="fu">lag</span>(views, <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(second_season_dropoff)) <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="do">## Shows with high retention without new season influx of viewers</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>test_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(new_release <span class="sc">!=</span> <span class="st">'New Season Lift'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">mean_by_new_release =</span> <span class="fu">mean</span>(views), <span class="at">.by =</span> <span class="fu">c</span>(series, new_release)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> new_release, <span class="at">values_from =</span> mean_by_new_release) <span class="sc">|&gt;</span> </span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">na.omit</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">maintenance_to_new_release_ratio =</span> Maintenance<span class="sc">/</span><span class="st">`</span><span class="at">New Season</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(test_shows <span class="sc">|&gt;</span> <span class="fu">select</span>(show_type), <span class="at">by =</span> <span class="fu">join_by</span>(series)) <span class="sc">|&gt;</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>() <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="do">## Shows in maintenance with high retention that appear in all 4 report periods</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>test_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">all</span>(new_release <span class="sc">==</span> <span class="st">'Maintenance'</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">n_distinct</span>(report_date) <span class="sc">==</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">mean_views =</span> <span class="fu">mean</span>(views)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">change_from_last_report =</span> (mean_views <span class="sc">-</span> <span class="fu">lag</span>(mean_views))<span class="sc">/</span><span class="fu">lag</span>(mean_views),</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>            <span class="at">first_last_report_change =</span> (mean_views <span class="sc">-</span> <span class="fu">lag</span>(mean_views, <span class="dv">3</span>))<span class="sc">/</span><span class="fu">lag</span>(mean_views, <span class="dv">3</span>)) <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">avg_drop_between_reports =</span> <span class="fu">mean</span>(change_from_last_report, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>              <span class="at">max_drop_between_reports =</span> <span class="fu">max</span>(change_from_last_report, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="ot">&lt;-</span> shows_with_seasons <span class="sc">|&gt;</span> </span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">total_seasons =</span> <span class="fu">max</span>(season_number),</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>           <span class="at">report_date =</span> <span class="fu">as.factor</span>(report_date),</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>           <span class="at">season_number =</span> <span class="fu">as.integer</span>(season_number)) <span class="sc">|&gt;</span></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">max</span>(season_number) <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">n_distinct</span>(report_date) <span class="sc">==</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">new_release =</span> <span class="fu">case_when</span>(</span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>           days_since_release <span class="sc">&lt;</span> <span class="dv">182</span> <span class="sc">~</span> <span class="st">'New Season'</span>,</span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>           <span class="fu">any</span>(days_since_release <span class="sc">&lt;</span> <span class="dv">182</span>) <span class="sc">~</span> <span class="st">'New Season Lift'</span>,</span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>           <span class="at">.default =</span> <span class="st">'Maintenance'</span></span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>single_season_shows <span class="ot">&lt;-</span> shows_with_seasons <span class="sc">|&gt;</span> </span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">total_seasons =</span> <span class="fu">max</span>(season_number),</span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>           <span class="at">report_date =</span> <span class="fu">as.factor</span>(report_date),</span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>           <span class="at">season_number =</span> <span class="fu">as.integer</span>(season_number)) <span class="sc">|&gt;</span></span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">max</span>(season_number) <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">n_distinct</span>(report_date) <span class="sc">==</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span> </span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">new_release =</span> <span class="fu">case_when</span>(</span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>           days_since_release <span class="sc">&lt;</span> <span class="dv">182</span> <span class="sc">~</span> <span class="st">'New Season'</span>,</span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>           <span class="fu">any</span>(days_since_release <span class="sc">&lt;</span> <span class="dv">182</span>) <span class="sc">~</span> <span class="st">'New Season Lift'</span>,</span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>           <span class="at">.default =</span> <span class="st">'Maintenance'</span></span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>maintenance_shows <span class="ot">&lt;-</span> multi_season_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">any</span>(new_release <span class="sc">==</span> <span class="st">'New Season'</span>))</span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a>new_release_shows <span class="ot">&lt;-</span> multi_season_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(new_release <span class="sc">==</span> <span class="st">"New Season"</span>)</span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a>bump_shows <span class="ot">&lt;-</span> multi_season_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(new_release <span class="sc">==</span> <span class="st">'New Season Lift'</span>)</span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> multi_season_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(season <span class="sc">==</span> <span class="st">'Season 9'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(new_release) <span class="sc">|&gt;</span> </span>
+<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">avg_views =</span> <span class="fu">mean</span>(views)) </span>
+<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a>calc_new_season_bump <span class="ot">&lt;-</span> <span class="cf">function</span>(data, season){</span>
+<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a>    season_num <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">'Season '</span>, {{season}})</span>
+<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a>    avg_by_release_type <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> </span>
+<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(season <span class="sc">==</span> season_num) <span class="sc">|&gt;</span> </span>
+<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a>        <span class="fu">group_by</span>(new_release) <span class="sc">|&gt;</span> </span>
+<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a>        <span class="fu">summarise</span>(<span class="at">avg_views =</span> <span class="fu">mean</span>(views))</span>
+<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a>    (avg_by_release_type[avg_by_release_type<span class="sc">$</span>new_release <span class="sc">==</span> <span class="st">'New Season Lift'</span>,]<span class="sc">$</span>avg_views <span class="sc">-</span> avg_by_release_type[avg_by_release_type<span class="sc">$</span>new_release <span class="sc">==</span> <span class="st">'Maintenance'</span>,]<span class="sc">$</span>avg_views) <span class="sc">/</span> avg_by_release_type[avg_by_release_type<span class="sc">$</span>new_release <span class="sc">==</span> <span class="st">'Maintenance'</span>,]<span class="sc">$</span>avg_views</span>
+<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span><span class="dv">12</span> <span class="sc">|&gt;</span> </span>
+<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a>    <span class="fu">map_dbl</span>(\(x) <span class="fu">calc_new_season_bump</span>(multi_season_shows, x))</span>
+<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span></span>
+<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, report_date) <span class="sc">|&gt;</span>    </span>
+<span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(season_number) <span class="sc">|&gt;</span> </span>
+<span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">percent_change =</span> (views <span class="sc">-</span> <span class="fu">lag</span>(views, <span class="dv">1</span>))<span class="sc">/</span><span class="fu">lag</span>(views, <span class="dv">1</span>) <span class="sc">*</span><span class="dv">100</span>) <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
+<span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(series <span class="sc">==</span> <span class="st">'Cobra Kai'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-114"><a href="#cb11-114" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> season_number, <span class="at">y =</span> views, <span class="at">group =</span> report_date, <span class="at">color =</span> report_date))<span class="sc">+</span></span>
+<span id="cb11-115"><a href="#cb11-115" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb11-116"><a href="#cb11-116" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">comma_format</span>())</span>
+<span id="cb11-117"><a href="#cb11-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-118"><a href="#cb11-118" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-119"><a href="#cb11-119" aria-hidden="true" tabindex="-1"></a>    <span class="co">#filter(series == 'Black Mirror') |&gt; </span></span>
+<span id="cb11-120"><a href="#cb11-120" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date, <span class="at">y =</span> views, <span class="at">group =</span> season, <span class="at">color =</span> season))<span class="sc">+</span></span>
+<span id="cb11-121"><a href="#cb11-121" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb11-122"><a href="#cb11-122" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">comma_format</span>())</span>
+<span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a>maintenance_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, season) <span class="sc">|&gt;</span> </span>
+<span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date, <span class="at">y =</span> views, <span class="at">color =</span> series))<span class="sc">+</span></span>
+<span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">comma_format</span>())<span class="sc">+</span></span>
+<span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span>
+<span id="cb11-131"><a href="#cb11-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-132"><a href="#cb11-132" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span> </span>
+<span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a>    <span class="co"># filter(series == 'Sex Education') |&gt; </span></span>
+<span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date, <span class="at">y =</span> views))<span class="sc">+</span></span>
+<span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> season_number)<span class="sc">+</span></span>
+<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">comma_format</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>shows <span class="sc">|&gt;</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(views)) <span class="sc">|&gt;</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> views))<span class="sc">+</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_ecdf</span>(<span class="at">geom =</span> <span class="st">'line'</span>)<span class="sc">+</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_log10</span>()</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>           </span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>show_share<span class="sc">|&gt;</span> </span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> row_num, <span class="at">y =</span> view_share, <span class="at">color =</span> report))<span class="sc">+</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_log10</span>()</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>show_share_season_limited <span class="sc">|&gt;</span> </span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> row_num, <span class="at">y =</span> view_share, <span class="at">group =</span> is_seasonal, <span class="at">color =</span> is_seasonal))<span class="sc">+</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>top_100_shows_seasonal <span class="ot">&lt;-</span> show_share_season_limited <span class="sc">|&gt;</span> </span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(row_num <span class="sc">&lt;=</span> <span class="dv">100</span>)</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>top_100_shows_seasonal <span class="sc">|&gt;</span> </span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> row_num, <span class="at">y =</span> view_share, <span class="at">color =</span> is_seasonal, <span class="at">group =</span> is_seasonal))<span class="sc">+</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>show_share <span class="sc">|&gt;</span> </span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(views) <span class="sc">|&gt;</span> </span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> views, <span class="at">y =</span> n))<span class="sc">+</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">6792</span><span class="sc">*</span>(.<span class="dv">5</span><span class="sc">^</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">13</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(new_release <span class="sc">==</span> <span class="st">"New Season"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(series) <span class="sc">|&gt;</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(series) <span class="sc">|&gt;</span> <span class="fu">View</span>()</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>multi_season_shows <span class="sc">|&gt;</span> </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(series, season) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>shows <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(views)) <span class="sc">|&gt;</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> views))<span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_ecdf</span>(<span class="at">geom =</span> <span class="st">'line'</span>)<span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_log10</span>()</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>           </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>show_share<span class="sc">|&gt;</span> </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> row_num, <span class="at">y =</span> view_share, <span class="at">color =</span> report))<span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_log10</span>()</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>show_share_season_limited <span class="sc">|&gt;</span> </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> row_num, <span class="at">y =</span> view_share, <span class="at">group =</span> is_seasonal, <span class="at">color =</span> is_seasonal))<span class="sc">+</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>top_100_shows_seasonal <span class="ot">&lt;-</span> show_share_season_limited <span class="sc">|&gt;</span> </span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(row_num <span class="sc">&lt;=</span> <span class="dv">100</span>)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>top_100_shows_seasonal <span class="sc">|&gt;</span> </span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> row_num, <span class="at">y =</span> view_share, <span class="at">color =</span> is_seasonal, <span class="at">group =</span> is_seasonal))<span class="sc">+</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>show_share <span class="sc">|&gt;</span> </span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(views) <span class="sc">|&gt;</span> </span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> views, <span class="at">y =</span> n))<span class="sc">+</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">6792</span><span class="sc">*</span>(.<span class="dv">5</span><span class="sc">^</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">13</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
 </section>
 </section>
 

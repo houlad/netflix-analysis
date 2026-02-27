@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Netflix Analysis"
 execute:
     warning: false
 format: 
@@ -51,9 +51,10 @@ So let's dive in and see what the data reveals!
 # format the numbers displayed in a table
 format_table_numbers <- function(table){
     table |>
-      fmt_number(
+      fmt_percent(
         columns = everything(),
-        decimals = 2
+        decimals = 2,
+        scale_values = FALSE
       ) 
 }
 # format the header of a table
@@ -68,6 +69,17 @@ format_table_header <- function(table) {
       locations = cells_column_labels(everything())
     )
 }
+
+# format the styling of a table
+format_table_style <- function(table){
+  table |> 
+    tab_style(
+      style = cell_borders(
+        sides = c("top", "bottom")),
+      locations = cells_body()) |> 
+    opt_stylize(add_row_striping = TRUE, color = 'gray')|> 
+    tab_options(quarto.disable_processing = TRUE)
+}
 ```
 
 ```{r, data-import}
@@ -81,7 +93,6 @@ shows <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidy
 ```
 
 ```{r, data-cleaning}
-
 calculate_days_since_release <- function(df){
     # determines the number of days between the release date and the 
     # last day of the reporting period
@@ -128,9 +139,9 @@ shows_cleaned <- shows |>
            report_date = as.factor(report_date)
            ) |> 
     ungroup() |> 
-    group_by(series, report_date) |> 
+    group_by(series, report_date, seasonal_tag = str_detect(season, "Season|Part|Collection|Volume|Chapter.*") == TRUE) |> 
     mutate(new_release = case_when(
-           days_since_release < 182 ~ 'New Season',
+           days_since_release < 182  ~ 'New Season',
            any(days_since_release < 182) ~ 'New Season Lift',
            .default = 'Maintenance')) |> 
     ungroup() |> 
@@ -139,7 +150,8 @@ shows_cleaned <- shows |>
         is.na(max(total_seasons))  ~ 'Limited Release',
         max(season_number) == 1 ~ 'Initial Season',
         max(season_number, na.rm = TRUE) > 1 ~ 'Multi Season'
-    )) 
+    )) |> 
+    select(-seasonal_tag)
 ```
 
 First things first, after loading the show data, I need to do some cleaning. You can examine the code in the fold above for the details, but the highlights are: 
@@ -217,7 +229,7 @@ calculate_grouped_cumulative_sum <- function(df, grouping_var, grouped_cumsum = 
 }
 ```
 
-```{r cumulative_views_plots}
+```{r, cumulative_views_plots}
 full_shows <- shows_cleaned |> 
     calculate_grouped_cumulative_sum(grouping_var = report, grouped_cumsum = TRUE) |> 
     ggplot(aes(x = row_num, y = view_share, color = report))+
@@ -289,7 +301,8 @@ and checking to see if the data follows a straight line.
 
 [^seasons]: Our dataset treats different seasons of a series as different shows. For example, Bridgerton: Season 1 and Bridgerton: Season 2 are two distinct shows.
 
-```{r cumulative_views_logged_axes}
+
+```{r, cumulative_views_logged_axes}
 logged_plot <- shows_cleaned |> 
     calculate_grouped_cumulative_sum(grouping_var = report, grouped_cumsum = TRUE) |> 
     ggplot(aes(x = row_num, y = view_share, color = report))+
@@ -301,17 +314,15 @@ logged_plot <- shows_cleaned |>
          title = '75% of all views are captured by ~25% of the Netflix show library',
          subtitle = 'The remaining 75% of the library captures only 25% of views'
          )+
-    scale_y_continuous(label = scales::percent_format())+
-    scale_x_continuous(label = scales::label_comma())+
     geom_hline(yintercept = .75, linetype = 'dashed', color = 'gray8')+
     theme(
         legend.position = 'inside',
         legend.key.width = unit(10, 'mm'),
         legend.position.inside = c(.9, .15)
     )+
-    scale_x_log10()+ 
-    scale_y_log10()
-#ggsave("logged_plot.png", logged_plot, width = 10, height = 8)
+    scale_x_log10(label = scales::label_comma())+ 
+    scale_y_log10(label = scales::percent_format())
+ggsave("logged_plot.png", logged_plot, width = 10, height = 8)
 ```
 
 ![Cumulative Views, Logged Axes](logged_plot.png){.lightbox #fig-three}
@@ -345,7 +356,7 @@ to figure these sorts of numbers out, but man I would love to get my hands on th
 As I noted in the introduction, my cumulative view plots sure sound an awful lot like an empirical cumulative distribution function. And that's
 true, they are similar, but subtly different. To see the difference in their interpretation, let's look at them side by side.
 
-```{r cumulative_view_ecdf_comparison_plot}
+```{r, cumulative_view_ecdf_comparison_plot}
 ecdf_plot <- shows_cleaned |> 
     filter(!is.na(views)) |> 
     ggplot(aes(x = views, color = report))+
@@ -395,7 +406,7 @@ One thing that pops out when viewing @fig-four, especially plot B, is how little
 out in the tails it's very difficult to extract detail. We can improve this by logging the axes like we did in @fig-three, but this time we are using the transformation to help us
 interpret the plot, not to test for a power law.
 
-```{r logged_cumulative_view_ecdf_comparison_plot}
+```{r, logged_cumulative_view_ecdf_comparison_plot}
 ecdf_log_plot <- shows_cleaned |> 
     filter(!is.na(views)) |> 
     ggplot(aes(x = views, color = report))+
@@ -422,7 +433,7 @@ full_shows_ecdf_comp_logged <- full_shows+
 
 comparison_plot_logged <- (full_shows_ecdf_comp_logged + ecdf_log_plot)+
     plot_annotation(tag_levels = "A", tag_prefix = "(", tag_suffix = ")") & theme(plot.tag.position = 'bottom') 
-ggsave('comparison_plot_logged.png', comparison_plot_logged, width = 10, height = 8)
+# ggsave('comparison_plot_logged.png', comparison_plot_logged, width = 10, height = 8)
 ```
 
 ![Comparing Cumulative Viewing vs ECDF Plots, logged](comparison_plot_logged.png){.lightbox #fig-five}
@@ -434,48 +445,285 @@ tail before.
 
 ## How Does Viewing Change Across Reports?
 
-Now on to question two: How does viewing of shows change across the four reports in the dataset? This is a fairly broad question so I'm going to
+Now on to my second question: How does viewing of shows change across the four reports in the dataset? This is a fairly broad question so I'm going to
 break it into four subquestions to address:
     
 1) How does a shows viewership decay over the four reporting periods? Does a show(or season of a show) steadily lose views every reporting period
     or is viewership resiliant over time?
-2)
+2) TODO
 
 ### How Do Show Views Change Across Reports?
 
-For this first section, the question is how views change across the four reporting periods. I want to be able to look at a show and say 
-'is this show viewed more or less than in the previous report'? Say we are looking at Stranger Things. One way to do this might be to 
-lump all the Stranger Things seasons together and see how the total views compare to the previous reporting period.
+My first question concerns how views change longitudinally across the four reporting periods. I'm going to examine this from three angles: 
 
-```{r stranger_things_decay}
+* First, I want to select a couple popular shows and see how their views have flucuated over the four reports
+* Second, I want to limit the question to limited series and see how those one-off shows perform over time
+* Third, I want to lump shows together by their season number and see if perhaps later seasons experience higher dropoff than earlier seasons
+
+#### Popular Shows
+
+-Total Show views X report date: Sum views of all show seasons by each report period
+-Total Show views X report date and contains_new_season: Sum views of all show seasons by each report period and whether contains_new_season = TRUE
+-Show views X report date, season-for single/two shows: Views for each season of each show
+-Show Views X season
+```{r, popular_show_decay}
 ## Viewership decay
 multi_report_shows <- shows_cleaned |> 
     group_by(series, season) |> 
     filter(n_distinct(report_date) == 4) |> 
     ungroup()
 
-stranger_things_dropoff <- multi_report_shows |> 
-    group_by(series, season) |> 
-    arrange(report_date)  |> 
-    mutate(subsequent_report_dropoff = (views - lag(views, 1))/lag(views, 1) *100)
+### sum total of show views(all seasons) each report
+multi_report_shows |> 
+  filter(startsWith(title,'You:') | series %in% c('Stranger Things', 'Breaking Bad', 'Seinfeld')) |> 
+  group_by(series, report_date) |> 
+  summarise(total_views = sum(views)) |> 
+  arrange(report_date) |> 
+  mutate(subsequent_report_dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
+  pivot_wider(id_cols = -total_views, names_from = series, values_from = subsequent_report_dropoff) |> 
+  gt() |> 
+  format_table_header() |> 
+  format_table_numbers() |> 
+  format_table_style() 
 
-stranger_things_dropoff |> 
+
+
+multi_report_shows |> 
     ungroup() |> 
-    group_by(series, season) |> 
+    group_by(series, season) |>
     mutate(contains_new_season = case_when(
                                     new_release %in% c("New Season", "New Season Lift") ~ TRUE,
-                                    .default = FALSE)) |> 
-    ungroup() |> 
-    filter(series == 'Stranger Things') |> 
-    group_by(report_date) |> 
-    summarise(avg_dropoff = mean(subsequent_report_dropoff)) |> 
+                                    .default = FALSE)) |>
+    ungroup() |>
+    filter(startsWith(title,'You:') | series %in% c('Stranger Things', 'Breaking Bad', 'Seinfeld')) |> 
+    group_by(series, report_date) |> 
+    summarise(total_views = sum(views)) |> 
+    arrange(report_date) |> 
+    mutate(subsequent_report_dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100)
+    pivot_wider(-total_views, names_from = series, values_from = subsequent_report_dropoff) |> 
     gt() |> 
     format_table_header() |> 
-    format_table_numbers()
+    format_table_numbers() |> 
+    format_table_style() 
+
+viewer_decay2 <- function(data, by_series = TRUE){
+  # determine if grouping by series or by season
+  group_var <- if(by_series) "series" else "season"
+  
+  working_df <- data |> 
+      # data should be ungrouped coming into this function, but explicitly ungroup for safety
+      ungroup() |> 
+      group_by(across(all_of(c(group_var, "report_date")))) |> 
+      mutate(contains_new_season = case_when(
+                                    new_release %in% c("New Season", "New Season Lift") ~ TRUE,
+                                    .default = FALSE)) |> 
+      summarise(total_views = sum(views, na.rm = TRUE),
+                contains_new_season = any(contains_new_season), # logical flag per series per report_date
+                .groups = 'drop') |> 
+      arrange(.data[[group_var]], report_date) |> 
+      group_by(.data[[group_var]]) |> 
+      mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
+      ungroup() |> 
+      complete(.data[[group_var]], report_date, fill = list(contains_new_season = FALSE))
+  
+  # nest data to get into form usable in reduce
+  nested_data <- working_df |> 
+      mutate(!!group_var := as.character(.data[[group_var]])) |>
+      group_by(.data[[group_var]]) |> 
+      arrange(report_date) |> 
+      nest()
+  
+  base_table <- working_df |> 
+      select(report_date, all_of(group_var), dropoff) |> 
+      pivot_wider(names_from = all_of(group_var), values_from = dropoff) |> 
+      gt()
+  
+  # build final formatted table
+    reduce(
+      nested_data[[group_var]],
+      .init = base_table,
+      function(gt_obj, current_item){
+        #extract logical information
+        formatting <- nested_data |> 
+          filter(.data[[group_var]] == current_item) |> 
+          pull(data) |> 
+          pluck(1) |> 
+          pull(contains_new_season)
+        
+        #apply formatting
+        tab_style(
+          gt_obj,
+          style = cell_fill(color = 'yellow', alpha = .5),
+          locations = cells_body(
+            columns = all_of(current_item),
+            rows = formatting
+          )
+        )
+      }
+    ) |> 
+    format_table_header() |> 
+    format_table_numbers() |> 
+    format_table_style()
+}    
+
+multi_report_shows |> 
+  filter(startsWith(title, "Virgin River")) |> 
+  viewer_decay2(by_series = FALSE) 
+    
+viewer_decay <- function(data, by_series = TRUE){
+  if(by_series){
+    # data is filtered before reaching this function step
+    # prepare data and calculate total views and new_season logical flag
+    working_df <- data |> 
+      # data should be ungrouped coming into this function, but explicitly ungroup for safety
+      ungroup() |> 
+      group_by(series, report_date) |> 
+      mutate(contains_new_season = case_when(
+                                    new_release %in% c("New Season", "New Season Lift") ~ TRUE,
+                                    .default = FALSE)) |> 
+      summarise(total_views = sum(views, na.rm = TRUE),
+                contains_new_season = any(contains_new_season), # logical flag per series per report_date
+                .groups = 'drop') |> 
+      arrange(series, report_date) |> 
+      group_by(series) |> 
+      mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
+      ungroup() |> 
+      complete(series, report_date, fill = list(contains_new_season = FALSE))
+    
+    # nest data to get into form usable in reduce
+    nested_data <- working_df |> 
+      group_by(series) |> 
+      arrange(report_date) |> 
+      nest()
+    
+    base_table <- working_df |> 
+      select(report_date, series, dropoff) |> 
+      pivot_wider(names_from = series, values_from = dropoff) |> 
+      gt()
+    
+    # build final formatted table
+    reduce(
+      nested_data$series,
+      .init = base_table,
+      function(gt_obj, current_series){
+        #extract logical information
+        formatting <- nested_data |> 
+          filter(series == current_series) |> 
+          pull(data) |> 
+          pluck(1) |> 
+          pull(contains_new_season)
+        
+        #apply formatting
+        tab_style(
+          gt_obj,
+          style = cell_fill(color = 'yellow', alpha = .5),
+          locations = cells_body(
+            columns = all_of(current_series),
+            rows = formatting
+          )
+        )
+      }
+    ) |> 
+    format_table_header() |> 
+    format_table_numbers() |> 
+    format_table_style() 
+    
+  }else{
+    working_df <- data |> 
+      group_by(report_date, season) |> 
+      mutate(contains_new_season = case_when(
+                                      new_release %in% c("New Season", "New Season Lift") ~ TRUE,
+                                      .default = FALSE)) |> 
+      summarise(total_views = sum(views, na.rm = TRUE),
+                contains_new_season = any(contains_new_season), # logical flag per series per report_date
+                .groups = 'drop') |> 
+      arrange(report_date, season) |> 
+      group_by(season) |> 
+      mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
+      ungroup() |> 
+      complete(season, report_date, fill = list(contains_new_season = FALSE))
+    
+    # nest data to get into form usable in reduce
+    nested_data <- working_df |> 
+      group_by(season) |> 
+      arrange(report_date) |> 
+      nest()
+    
+    base_table <- working_df |> 
+      select(report_date, season, dropoff) |> 
+      pivot_wider(names_from = season, values_from = dropoff) |> 
+      gt()
+    
+    # build final formatted table
+    reduce(
+      nested_data$season,
+      .init = base_table,
+      function(gt_obj, current_season){
+        #extract logical information
+        formatting <- nested_data |> 
+          filter(season == current_season) |> 
+          pull(data) |> 
+          pluck(1) |> 
+          pull(contains_new_season)
+        
+        #apply formatting
+        tab_style(
+          gt_obj,
+          style = cell_fill(color = 'yellow', alpha = .5),
+          locations = cells_body(
+            columns = all_of(current_season),
+            rows = formatting
+          )
+        )
+      }
+    ) |> 
+    format_table_header() |> 
+    format_table_numbers() |> 
+    format_table_style() 
+  }
+  
+}
+
+multi_report_shows |> 
+  filter(startsWith(title, "Virgin River")) |> 
+  viewer_decay(by_series = FALSE) 
+
+
+multi_report_shows |> 
+  filter(startsWith(title, "Virgin River")) |> 
+      group_by(report_date, season) |> 
+      mutate(contains_new_season = case_when(
+                                      new_release %in% c("New Season", "New Season Lift") ~ TRUE,
+                                      .default = FALSE)) |> 
+      summarise(total_views = sum(views, na.rm = TRUE),
+                contains_new_season = any(contains_new_season), # logical flag per series per report_date
+                .groups = 'drop') |> 
+      arrange(report_date, season) |> 
+      group_by(season) |> 
+      mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
+      ungroup() |> 
+      complete(season, report_date, fill = list(contains_new_season = FALSE)) |> 
+  select(report_date, season, dropoff, ) |> 
+  pivot_wider(names_from = season, values_from = dropoff)
+  
+
+# gtsave()
+```
+
+#### Limited Series 
+
+```{r, limited_series_decay, eval = FALSE}
+multi_report_dropoff |> 
+  ungroup() |> 
+  filter(season == 'Limited Series') |> 
+  group_by(report_date) |> 
+  summarise(avg_dropoff = median(subsequent_report_dropoff))
+
 
 ```
 
-```{r eval = FALSE}
+
+```{r, eval = FALSE}
 ## Seasonal Dropoff
 test_shows |> 
     filter(season %in% c("Season 1", "Season 2")) |> 
