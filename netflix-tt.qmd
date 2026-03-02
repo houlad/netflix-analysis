@@ -456,7 +456,9 @@ break it into four subquestions to address:
 
 My first question concerns how views change longitudinally across the four reporting periods. I'm going to examine this from three angles: 
 
-* First, I want to select a couple popular shows and see how their views have flucuated over the four reports
+* First, I want to look at the overall views each reporting period 
+* Second, I'll look at whether there are apparent trends in viewing 
+I want to select a couple popular shows and see how their views have flucuated over the four reports
 * Second, I want to limit the question to limited series and see how those one-off shows perform over time
 * Third, I want to lump shows together by their season number and see if perhaps later seasons experience higher dropoff than earlier seasons
 
@@ -475,38 +477,29 @@ multi_report_shows <- shows_cleaned |>
 
 ### sum total of show views(all seasons) each report
 multi_report_shows |> 
-  filter(startsWith(title,'You:') | series %in% c('Stranger Things', 'Breaking Bad', 'Seinfeld')) |> 
-  group_by(series, report_date) |> 
-  summarise(total_views = sum(views)) |> 
-  arrange(report_date) |> 
-  mutate(subsequent_report_dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
-  pivot_wider(id_cols = -total_views, names_from = series, values_from = subsequent_report_dropoff) |> 
-  gt() |> 
-  format_table_header() |> 
-  format_table_numbers() |> 
-  format_table_style() 
-
-
-
-multi_report_shows |> 
     ungroup() |> 
     group_by(series, season) |>
     mutate(contains_new_season = case_when(
                                     new_release %in% c("New Season", "New Season Lift") ~ TRUE,
                                     .default = FALSE)) |>
     ungroup() |>
-    filter(startsWith(title,'You:') | series %in% c('Stranger Things', 'Breaking Bad', 'Seinfeld')) |> 
+    filter(series %in% c("Bridgerton")) |>
+    # filter(startsWith(title,'You:') | series %in% c('Stranger Things', 'Breaking Bad', 'Seinfeld')) |> 
     group_by(series, report_date) |> 
     summarise(total_views = sum(views)) |> 
     arrange(report_date) |> 
-    mutate(subsequent_report_dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) 
+    mutate(subsequent_report_dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
     pivot_wider(-total_views, names_from = series, values_from = subsequent_report_dropoff) |> 
     gt() |> 
     format_table_header() |> 
     format_table_numbers() |> 
     format_table_style() 
 
-calc_table_data <- function(data, grouping_var){
+
+# calculates dropoff rate of shows by a 'single' specified grouping variable
+calc_table_data <- function(data, grouping_var = NULL){
+  #when grouping_var is NULL, function is still grouping by report_date, but that is the only grouping
+  
   group <- enquo(grouping_var)
   
   working_df <- data |> 
@@ -517,11 +510,14 @@ calc_table_data <- function(data, grouping_var){
                                     new_release %in% c("New Season", "New Season Lift") ~ TRUE,
                                     .default = FALSE)) |> 
       summarise(total_views = sum(views, na.rm = TRUE),
-                contains_new_season = any(contains_new_season), # logical flag per series per report_date
+                contains_new_season = any(contains_new_season),# logical flag per series per report_date
                 .groups = 'drop') |> 
       arrange(!!group, report_date) |> 
       group_by(!!group) |> 
-      mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
+      mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100, 
+             dropoff = if_else(is.na(dropoff), total_views, dropoff),
+             is_first_row = row_number() == 1,
+             ) |> 
       ungroup() |> 
       complete(!!group, report_date, fill = list(contains_new_season = FALSE))
   working_df
@@ -543,39 +539,82 @@ build_formatted_table <- function(data, grouping_var){
       pivot_wider(names_from = !!group, values_from = dropoff) |>
       gt()
   
-  # create a set of named vectors containing the logic for formatting table
-  formatting_flag <- data |> 
-    summarise(flags = list(contains_new_season), .by = !!group) |> 
+  # create a set of named vectors containing the logic for conditionally formatting table
+  conditional_formatting_flag <- data |> 
+    group_by(!!group) |> 
+    summarise(
+      logic_data = list(
+        list(
+          new_season_flag = contains_new_season,
+          first_row_flag = is_first_row
+      )), .groups = "drop") |> 
     deframe()
-    
   
-  # build final formatted table
-    reduce(
-      names(formatting_flag),
+  # build conditionally formatted table
+  reduce(
+      names(conditional_formatting_flag),
       .init = base_table,
       function(gt_obj, current_item){
         
-        #apply formatting
-        tab_style(
-          gt_obj,
-          style = cell_fill(color = 'yellow', alpha = .5),
-          locations = cells_body(
+        #gather conditional flags
+        flags <- conditional_formatting_flag[[current_item]]
+        
+        gt_obj |> 
+          tab_style(
+            style = cell_fill(color = 'white'),
+            locations = cells_body(
+              columns = all_of(current_item),
+              rows = flags$first_row_flag
+            )
+          ) |> 
+          #apply new season formatting
+          tab_style(
+            style = cell_fill(color = 'yellow', alpha = .5),
+            locations = cells_body(
+              columns = all_of(current_item),
+              rows = flags$new_season_flag 
+            )
+          ) |> 
+          fmt_number(
             columns = all_of(current_item),
-            rows = formatting_flag[[current_item]]
-          )
-        )
+            rows = flags$first_row_flag,
+            decimals = 0
+          ) |> 
+          fmt_percent(
+            columns = all_of(current_item),
+            rows = !flags$first_row_flag,
+            decimals = 2,
+            scale_values = FALSE
+      ) 
       }
     ) |>
     format_table_header() |>
-    format_table_numbers() |>
     format_table_style()
+
+
 }
     
-multi_report_shows |> 
-  filter(series %in% c('Virgin River')) |> 
-  # filter(startsWith(title,'You:') | series %in% c('Stranger Things', 'Breaking Bad', 'Seinfeld'))   |> 
-  calc_table_data(season) |> 
-  build_formatted_table(season)
+shows_cleaned |> 
+  group_by(report_date) |> 
+  summarise(total_views = sum(views, na.rm = TRUE)) |> 
+  arrange(report_date) |> 
+  mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
+  select(report_date, total_views, dropoff) |> 
+  gt() |> 
+  fmt_number(
+    columns = total_views,
+    rows = everything(),
+    decimals = 0
+  ) |> 
+  fmt_percent(
+    columns = dropoff,
+    rows = everything(),
+    decimals = 2,
+    scale_values = FALSE
+  ) |> 
+  format_table_header() |> 
+  format_table_style()
+  
 
 
 viewer_decay2 <- function(data, by_series = TRUE){
@@ -797,7 +836,7 @@ multi_report_dropoff |>
 
 ```{r, eval = FALSE}
 ## Seasonal Dropoff
-test_shows |> 
+shows_cleaned |> 
     filter(season %in% c("Season 1", "Season 2")) |> 
     group_by(series) |> 
     filter(sum(new_release == 'New Season') > 1) |>
@@ -808,7 +847,7 @@ test_shows |>
 
 
 ## Shows with high retention without new season influx of viewers
-test_shows |> 
+shows_cleaned |> 
     ungroup() |> 
     filter(new_release != 'New Season Lift') |> 
     summarise(mean_by_new_release = mean(views), .by = c(series, new_release)) |> 
@@ -816,11 +855,11 @@ test_shows |>
     na.omit() |> 
     group_by(series) |> 
     mutate(maintenance_to_new_release_ratio = Maintenance/`New Season`) |> 
-    left_join(test_shows |> select(show_type), by = join_by(series)) |>
+    left_join(shows_cleaned |> select(show_type), by = join_by(series)) |>
     distinct() |> View()
 
 ## Shows in maintenance with high retention that appear in all 4 report periods
-test_shows |> 
+shows_cleaned |> 
     filter(all(new_release == 'Maintenance')) |> 
     filter(n_distinct(report_date) == 4) |> 
     ungroup() |> 
@@ -898,7 +937,7 @@ calc_new_season_bump <- function(data, season){
 }
 
 1:12 |> 
-    map_dbl(\(x) calc_new_season_bump(multi_season_shows, x))
+    map_dbl(\(x) calc_new_season_bump(shows_cleaned, x))
     
 
 multi_season_shows |>
