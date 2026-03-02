@@ -466,7 +466,7 @@ My first question concerns how views change longitudinally across the four repor
 -Total Show views X report date and contains_new_season: Sum views of all show seasons by each report period and whether contains_new_season = TRUE
 -Show views X report date, season-for single/two shows: Views for each season of each show
 -Show Views X season
-```{r, popular_show_decay}
+```{r, popular_show_decay, eval = FALSE}
 ## Viewership decay
 multi_report_shows <- shows_cleaned |> 
     group_by(series, season) |> 
@@ -499,12 +499,84 @@ multi_report_shows |>
     group_by(series, report_date) |> 
     summarise(total_views = sum(views)) |> 
     arrange(report_date) |> 
-    mutate(subsequent_report_dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100)
+    mutate(subsequent_report_dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) 
     pivot_wider(-total_views, names_from = series, values_from = subsequent_report_dropoff) |> 
     gt() |> 
     format_table_header() |> 
     format_table_numbers() |> 
     format_table_style() 
+
+calc_table_data <- function(data, grouping_var){
+  group <- enquo(grouping_var)
+  
+  working_df <- data |> 
+      # data should be ungrouped coming into this function, but explicitly ungroup for safety
+      ungroup() |> 
+      group_by(across(c(!!group, "report_date"))) |> 
+      mutate(contains_new_season = case_when(
+                                    new_release %in% c("New Season", "New Season Lift") ~ TRUE,
+                                    .default = FALSE)) |> 
+      summarise(total_views = sum(views, na.rm = TRUE),
+                contains_new_season = any(contains_new_season), # logical flag per series per report_date
+                .groups = 'drop') |> 
+      arrange(!!group, report_date) |> 
+      group_by(!!group) |> 
+      mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
+      ungroup() |> 
+      complete(!!group, report_date, fill = list(contains_new_season = FALSE))
+  working_df
+  
+}    
+
+build_formatted_table <- function(data, grouping_var){
+  group <- enquo(grouping_var)
+  
+  # nest data to get into form usable in reduce
+  nested_data <- data |> 
+      mutate(!!group := as.character(!!group)) |>
+      group_by(!!group) |> 
+      arrange(report_date) |> 
+      nest()
+  
+  base_table <- data |>
+      select(report_date, !!group, dropoff) |>
+      pivot_wider(names_from = !!group, values_from = dropoff) |>
+      gt()
+  
+  # create a set of named vectors containing the logic for formatting table
+  formatting_flag <- data |> 
+    summarise(flags = list(contains_new_season), .by = !!group) |> 
+    deframe()
+    
+  
+  # build final formatted table
+    reduce(
+      names(formatting_flag),
+      .init = base_table,
+      function(gt_obj, current_item){
+        
+        #apply formatting
+        tab_style(
+          gt_obj,
+          style = cell_fill(color = 'yellow', alpha = .5),
+          locations = cells_body(
+            columns = all_of(current_item),
+            rows = formatting_flag[[current_item]]
+          )
+        )
+      }
+    ) |>
+    format_table_header() |>
+    format_table_numbers() |>
+    format_table_style()
+}
+    
+multi_report_shows |> 
+  filter(series %in% c('Virgin River')) |> 
+  # filter(startsWith(title,'You:') | series %in% c('Stranger Things', 'Breaking Bad', 'Seinfeld'))   |> 
+  calc_table_data(season) |> 
+  build_formatted_table(season)
+
 
 viewer_decay2 <- function(data, by_series = TRUE){
   # determine if grouping by series or by season
