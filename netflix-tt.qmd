@@ -445,16 +445,15 @@ tail before.
 
 ## How Does Viewing Change Across Reports?
 
-Now on to my second question: How does viewing change across the four reports in the dataset? Hold on though: what exactly is this question
+Now on to my second question: How does viewing change across the four reports in the dataset? What exactly is this question
 asking? Do we want to know how Netflix's total viewership changes across the reporting periods? Or maybe we are more interested in how views for a single series
-change across the four reports. But even there, do we want to know the season by season change or the total change in views across all seasons?
+change across the four reports. Even there, do we want to know the season by season change or the total change in views across all seasons?
 Perhaps we actually care about how views change when a new season of a show premiers. Do the other seasons of that series get a bump in views? 
 How big is that bump?
 
-As you can see, this seemingly simple question is not particularlly well specified. Since I'm in charge here(mwahaha), I'm going to 
-answer this in several ways, but I'm going to focus on metrics that illustrate how a series' views are growing/decaying between seasons/reports 
-as well as how views are impacted by the release of new seasons. So basically, how much lift does a new season give to old seasons of 
-a series, and how quickly does a series' viewership decay otherwise. Let's get started!
+As you can see, this seemingly simple question is not particularlly well specified. Since I'm in charge here(mwahaha), I'm going to divide this into 
+two parts. Part one will look at the overall level of viewership and part two will look at viewership for individual series and seasons.
+Let's get started!
 
 ### Overall Netflix Viewership
 
@@ -501,20 +500,20 @@ top_shows_by_report <- shows_cleaned |>
   format_table_header() |> 
   format_table_style()
 
-gtsave(top_shows_by_report, 'top_shows_by_report.png')
+# gtsave(top_shows_by_report, 'top_shows_by_report.png')
 ```
 
 ![Total Views](total_views_tbl.png){.lightbox #tbl-one}
 
 @tbl-one is simply the sum of all views in each reporting period. As a reminder, these reports are six month
 periods, so, for example, report date 2025-06-30 is the viewing period from January to the end of June in 2025.
-Viewing is relatively flat until this last report period where we see a big 6.5% bump. Intuitively 6.5%
+Viewing is relatively flat until the last report where we see a big 6.5% bump. Intuitively 6.5%
 seems like a big increase from one six month period to the next, so I quickly looked at the 100 most viewed
-shows in the dataset and grouped them by their reporting period[^most-viewed-note]. @tbl-two is the result.
-I don't know what happened, but the 2025 reporting period had significantly more top shows than any of the
+shows in the dataset and grouped them by their report[^most-viewed-note]. @tbl-two is the result.
+I don't know what happened, but the 2025 report had significantly more top shows than any of the
 previous reports. If you add up the viewership of these 100 shows most of the 6.5% difference appears to come
-from this small group of shows--there are ~500 million more 2025 views in the top 100 than any other reporting
-period. I'm not going to dive into this, but it's something to keep in mind.
+from this small group of shows--there are ~500 million more 2025 views in the top 100 than any other report.
+I'm not going to dive into this, but it's something to keep in mind.
 
 [^most-viewed-note]: This is not a perfect way to do this grouping. Most, but not all, of the time this
 grouping captures which period the show debuted in. A small handful of times- when the show debuted before
@@ -532,52 +531,58 @@ going to build a couple general purpose table functions to speed things up. I'm 
 but they are worth a look in the code fold if you are interested in reproducing some of this report.
 ```{r, table_building_functions}
 # calculates dropoff rate of shows by a 'single' specified grouping variable
-calc_table_data <- function(data, grouping_var = NULL){
-  #when grouping_var is NULL, function is still grouping by report_date, but that is the only grouping
+calc_table_data <- function(data, ...){
   
-  group <- enquo(grouping_var)
-  
-  working_df <- data |> 
+  grouping_vars <- enquos(...)
+
+  working_df <- data |>
       # data should be ungrouped coming into this function, but explicitly ungroup for safety
-      ungroup() |> 
-      group_by(across(c(!!group, "report_date"))) |> 
+      ungroup() |>
+      group_by(!!!grouping_vars) |>
       mutate(contains_new_season = case_when(
                                     new_release %in% c("New Season", "New Season Lift") ~ TRUE,
-                                    .default = FALSE)) |> 
+                                    .default = FALSE)) |>
       summarise(total_views = sum(views, na.rm = TRUE),
                 contains_new_season = any(contains_new_season),# logical flag per series per report_date
-                .groups = 'drop') |> 
-      arrange(!!group, report_date) |> 
-      group_by(!!group) |> 
-      mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100, 
+                .groups = 'drop')  |>
+      arrange(!!!grouping_vars)
+  
+  if(length(grouping_vars) > 1){
+    final_df <- working_df |> 
+      group_by(!!grouping_vars[[1]]) |>
+        mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100,
+               dropoff = if_else(is.na(dropoff), total_views, dropoff),
+               is_first_row = row_number() == 1,
+               ) |>
+        ungroup() |>
+        complete(!!!grouping_vars, fill = list(contains_new_season = FALSE))
+      final_df
+      
+  }else{
+  final_df <- working_df |> 
+    ungroup() |>
+      mutate(dropoff = (total_views - lag(total_views, 1))/lag(total_views, 1) *100,
              dropoff = if_else(is.na(dropoff), total_views, dropoff),
              is_first_row = row_number() == 1,
-             ) |> 
-      ungroup() |> 
-      complete(!!group, report_date, fill = list(contains_new_season = FALSE))
-  working_df
-  
+             ) |>
+      ungroup() |>
+      complete(!!!grouping_vars, fill = list(contains_new_season = FALSE))
+  final_df
+  }
+
 }    
 
-build_formatted_table <- function(data, grouping_var, add_conditional_highlights = TRUE){
-  group <- enquo(grouping_var)
-  
-  # nest data to get into form usable in reduce
-  nested_data <- data |> 
-      mutate(!!group := as.character(!!group)) |>
-      group_by(!!group) |> 
-      arrange(report_date) |> 
-      nest()
+build_formatted_table <- function(data, add_conditional_highlights = TRUE, ...){
+  groups <- enquos(...)
   
   base_table <- data |>
-      select(report_date, !!group, dropoff) |>
-      rename(`report date` = report_date) |> 
-      pivot_wider(names_from = !!group, values_from = dropoff) |>
-      gt()
+      select(!!!groups, dropoff) |>
+      pivot_wider(names_from = !!groups[[1]], values_from = dropoff) |>
+      gt() 
   
   # create a set of named vectors containing the logic for conditionally formatting table
   conditional_formatting_flag <- data |> 
-    group_by(!!group) |> 
+    group_by(!!groups[[1]]) |> 
     summarise(
       logic_data = list(
         list(
@@ -587,7 +592,7 @@ build_formatted_table <- function(data, grouping_var, add_conditional_highlights
     deframe()
   
   # build conditionally formatted table
-  if(add_conditional_highlights){
+  final_table <- 
     reduce(
         names(conditional_formatting_flag),
         .init = base_table,
@@ -596,22 +601,8 @@ build_formatted_table <- function(data, grouping_var, add_conditional_highlights
           #gather conditional flags
           flags <- conditional_formatting_flag[[current_item]]
           
-          gt_obj |> 
-            tab_style(
-              style = cell_fill(color = 'white'),
-              locations = cells_body(
-                columns = all_of(current_item),
-                rows = flags$first_row_flag
-              )
-            ) |> 
-            #apply new season formatting
-            tab_style(
-              style = cell_fill(color = 'yellow', alpha = .5),
-              locations = cells_body(
-                columns = all_of(current_item),
-                rows = flags$new_season_flag 
-              )
-            ) |> 
+          
+          result <- gt_obj |> 
             fmt_number(
               columns = all_of(current_item),
               rows = flags$first_row_flag,
@@ -622,36 +613,32 @@ build_formatted_table <- function(data, grouping_var, add_conditional_highlights
               rows = !flags$first_row_flag,
               decimals = 2,
               scale_values = FALSE
-        ) 
-        }
-      ) |>
+            )
+          
+          if(add_conditional_highlights){
+            result <- result |> 
+              tab_style(
+                style = cell_fill(color = 'white'),
+                locations = cells_body(
+                  columns = all_of(current_item),
+                  rows = flags$first_row_flag
+                )
+              ) |> 
+              #apply new season formatting
+              tab_style(
+                style = cell_fill(color = 'yellow', alpha = .5),
+                locations = cells_body(
+                  columns = all_of(current_item),
+                  rows = flags$new_season_flag 
+                )
+              )
+          }
+          return(result)
+          }
+    )
+    final_table |>
       format_table_header() |>
       format_table_style()
-  }else
-    {
-      reduce(
-        names(conditional_formatting_flag),
-        .init = base_table,
-        function(gt_obj, current_item){
-          flags <- conditional_formatting_flag[[current_item]]
-          
-          gt_obj |> 
-            fmt_number(
-                columns = all_of(current_item),
-                rows = flags$first_row_flag,
-                decimals = 0
-              ) |> 
-              fmt_percent(
-                columns = all_of(current_item),
-                rows = !flags$first_row_flag,
-                decimals = 2,
-                scale_values = FALSE
-          ) |> 
-            format_table_header() |> 
-            format_table_style()
-        }
-      )
-     }
 }
 ```
 
@@ -670,8 +657,8 @@ a single show has so much less leverage on the total.
 ```{r, all_seasonal_shows}
 seasonal_all_shows <- shows_cleaned |> 
   filter(season %in% paste0("Season ", 1:7)) |>
-  calc_table_data(grouping_var = season) |> 
-  build_formatted_table(grouping_var = season, add_conditional_highlights = FALSE)
+  calc_table_data(season, report_date) |> 
+  build_formatted_table(add_conditional_highlights = FALSE, season, report_date)
 
 # gtsave(seasonal_all_shows, "seasonal_all_shows.png")
 ```
@@ -683,19 +670,20 @@ no_new_seasons <- shows_cleaned |>
   filter(season %in% paste0("Season ", 1:7)) |>
   group_by(series, report_date) |> 
   filter(!any(new_release == 'New Season Lift')) |> 
-  calc_table_data(grouping_var = season) |> 
-  build_formatted_table(grouping_var = season, add_conditional_highlights = FALSE)
+  calc_table_data(season, report_date) |> 
+  build_formatted_table(add_conditional_highlights = FALSE, season, report_date)
 
 new_seasons <- shows_cleaned |> 
   filter(season %in% paste0("Season ", 1:7)) |>
   group_by(series, report_date) |> 
   filter(any(new_release == 'New Season Lift')) |> 
-  calc_table_data(grouping_var = season) |> 
-  build_formatted_table(grouping_var = season, add_conditional_highlights = FALSE)
+  calc_table_data(season, report_date) |> 
+  build_formatted_table(add_conditional_highlights = FALSE, season, report_date)
 
-gtsave(no_new_seasons, "no_new_seasons.png")
-gtsave(new_seasons, "new_seasons.png")
+# gtsave(no_new_seasons, "no_new_seasons.png")
+# gtsave(new_seasons, "new_seasons.png")
 ```
+
 I can dig into this data subset a little deeper if I break this into two tables. I group our data by show and report,
 and then say: if the show didn't have a new season drop in the report period, the shows data from that report
 period goes in @tbl-four. If the show did have a new season drop in the report period, the shows data from that report
@@ -707,12 +695,40 @@ and 2 in table 1 and 3 and 4 in table 2- but it I think is justified to demonstr
 
 ![Total Views, by Season for reports with new seasons](new_seasons.png){.lightbox #tbl-five}
 
- 
+@tbl-four shows similar traits to season one from @tbl-three: there are a lot of shows in the data and the views for 
+each season are relatively stable. In contrast, @tbl-five demonstrates how impactful new seasons are, but suffers from the 
+later seasons problem mentioned above: each season in @tbl-five has so few shows that a single show having a big viewership
+disproportionately impacts the rest of the data. 
 
-I'm not sure about you, but these huge summations aren't scratching my data itch. Looking at shows at this level of aggregation
-washes out so much detail that it's difficult to answer interesting questions like 'how quickly do shows lose their audience' or 
+There are ways we could try to lessen single show impact, but these huge summation tables aren't scratching my data itch. Looking at shows at this level of aggregation washes out so much detail that it's difficult to answer interesting questions like 'how quickly do shows lose their audience' or 
 'how much does a new season lift the views of older seasons'. The answer to that needs to be gleaned by the show or maybe genre(which 
-we don't have access to). So now we turn to 
+we don't have access to) because at the level of the entire dataset it's somewhat meaningless to ask 'how much viewership a show lose between season, on average'. There isn't really 
+
+```{r, eval = FALSE}
+shows_cleaned |> 
+  ungroup() |> 
+  filter(season %in% paste0("Season ", 1:7)) |>
+  # filter(series %in% c("Virgin River")) |>
+  group_by(report_date, season) |> 
+  summarise(total_views = sum(views, na.rm = TRUE),
+            total_shows = n()) |> 
+  mutate(perc_change = (total_views - lag(total_views, 1))/lag(total_views, 1) *100) |> 
+  pivot_wider(-total_views, names_from = report_date, values_from = perc_change)
+
+shows_cleaned |> 
+  ungroup() |> 
+  filter(season %in% paste0("Season ", 1:7)) |>
+  # filter(series %in% c("Virgin River", 'Seinfeld', 'Arrested Development')) |>
+  calc_table_data(report_date, season) |> 
+  build_formatted_table(add_conditional_highlights = FALSE, report_date, season)
+
+
+shows_cleaned |> 
+  ungroup() |> 
+  calc_table_data(report_date) |> 
+  build_formatted_table(add_conditional_highlights = FALSE, report_date)
+```
+
 
 ###
 
@@ -746,9 +762,10 @@ multi_report_shows |>
 
 shows_cleaned |> 
   filter(season %in% paste0("Season ", 1:7)) |>
+  filter(series %in% c("Virgin River")) |> 
   ungroup() |> 
-  calc_table_data(grouping_var = season) |> View()
-  build_formatted_table(grouping_var = season, add_conditional_highlights = FALSE)
+  calc_table_data(grouping_var = season) |>
+  build_formatted_table(grouping_var = season, add_conditional_highlights = TRUE)
 
 
 # calculates dropoff rate of shows by a 'single' specified grouping variable
