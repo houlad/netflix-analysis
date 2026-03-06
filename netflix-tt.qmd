@@ -49,12 +49,12 @@ So let's dive in and see what the data reveals!
 
 ```{r, table_formating_functions, echo = FALSE}
 # format the numbers displayed in a table
-format_table_numbers <- function(table){
+format_table_numbers <- function(table, scale_vals = FALSE){
     table |>
       fmt_percent(
         columns = everything(),
         decimals = 2,
-        scale_values = FALSE
+        scale_values = scale_vals
       ) 
 }
 # format the header of a table
@@ -545,7 +545,7 @@ calc_table_data <- function(data, summary_func = sum,  ...){
       ungroup() |>
       group_by(!!!grouping_vars) |>
       mutate(contains_new_season = case_when(
-                                    new_release %in% c("New Season", "New Season Lift") ~ TRUE,
+                                    new_release %in% c( "New Season Lift") ~ TRUE,
                                     .default = FALSE)) |>
       summarise(!!col_name := rlang::exec(summary_func, views, na.rm = TRUE),
                 contains_new_season = any(contains_new_season),# logical flag per series per report_date
@@ -686,8 +686,8 @@ show_count <- shows_cleaned |>
 
 As you can see from @tbl-season-cohort, yes! This significantly changes the interpretation. 
 Now it's not  'season 1's get viewed so much more often than other seasons', it's 'there are so many more season 1's in the 
-dataset that they have significantly higher total views'. This is a perfectly fine interpretation
-of this way of slicing the data, but it's pretty unsatisfying. We know that more shows in a cohort probably results in more 
+dataset that they have significantly higher total views'. This is a perfectly reasonable interpretation
+of this way of slicing the data, but it's also pretty unsatisfying. We know that more shows in a cohort probably results in more 
 total views. That seems relatively obvious. I think the question people actually want answered from this sort of framing
 though is 'on average, how big of an increase/decrease do we expect to see from season 1 to season 2, and does this number vary
 across reports'? To get at that question, we need something like the average(or median) views for each season by report.
@@ -707,7 +707,7 @@ avg_views <- shows_cleaned |>
 ```
 
 
-@tbl-avg-views-reports provides that information. With this we can say that, on average, in the 2025 report season 2's have 13.9% increased viewership compared to season 1's. As you can see in the table though, these numbers bounce around all over the place. This sort of thing perks my ears up and makes me think that either something is wrong or that this perhaps isn't a great way of analysing the information. Let's think through why. So what @tbl-avg-views-reports is providing is the average views for all season one shows in each report. All the other rows provide the percent increase or decrease from the previous season's numbers. But as we saw earlier in @tbl-season-cohort, these seasonal cohorts contain vastly different numbers of shows. That means that season one will have tons of shows, from the most popular to barely watched shows that just fill out the library. Later seasons have selection bias built in. How do you get to the second, third, fourth, etc., season of a show? You have a really popular show! So, for example, season 7 has fewer shows to average over, but, more importantly, has already effectively filtered out those lower viewed shows because they never had a season 7 made. 
+@tbl-avg-views-reports provides that information. With this we can say that, on average, in the 2025 report season 2's have 13.9% increased viewership compared to season 1's. As you can see in the table though, these numbers bounce around all over the place. This sort of thing perks my ears up and makes me think that either something is wrong or that this perhaps isn't a great way of analysing the information. Let's think through why. What @tbl-avg-views-reports is displaying is the average views of a season one show in each report. All the other rows provide the percent increase or decrease from the previous season's numbers. But as we saw earlier in @tbl-season-cohort, these seasonal cohorts contain vastly different numbers of shows. That means that season one will have tons of shows, from the most popular to the barely watched shows that just fill out the library. Later seasons have survivorship(I think that's the one) bias built in. How do you get to the second, third, fourth, etc., season of a show? You have a really popular show! So season 7, for example, has fewer shows to average over, but, more importantly, has already effectively filtered out those less viewed shows because they never had a season 7 made. 
 
 ![Average views of a specific season across reports](avg_views.png){.lightbox #tbl-avg-views-reports}
 
@@ -725,7 +725,7 @@ driven by the behavior of one or two shows.
 
 #### Across Seasons
 
-Perhaps slicing the data across seasons will provide us with more useful information to address how viewing changed across the reports. How is slicing across seasons different from slicing across reports? Well, when we slice across seasons, each column in @tbl-across-season is now comparing how that specific season does in each report. So season 1's had ~3 billion views in the 2023 report, then about 4.5% more in the first half of 2024. So each row just tells how viewing increased or decreased from the last report--for that specific season. This is nice because we no longer have to worry about the fact that season 1's have 3 billion views and season 7's have 170 million. These totals are roughly the same magnitude in each report so we aren't just seeing an artifact of the fact that different season cohorts have different show counts. Can we say anything informative about how viewing has changed across the reports? I think the most we can gather from @tbl-across-season is that the views of a specific season cohort are relatively stable for early seasons and grow slightly more volatile as you go up in season number. As mentioned above, I think the smaller pool of shows in later season cohorts is the cause of this, but we can actually see evidence of that in the table.
+Perhaps slicing the data across seasons will provide us with more useful information to address how viewing changed across the reports. How is slicing across seasons different from slicing across reports? Well, when we slice across seasons, each column in @tbl-across-season is now comparing how that specific season does in each report. So season 1's had ~3 billion views in the 2023 report, then about 4.5% more in the first half of 2024. Each row tells how viewing increased or decreased from the last report--for that specific season. This is nice because we no longer have to worry about season 1's having 3 billion views and season 7's having 170 million. These totals are roughly the same magnitude in each report so we aren't just seeing an artifact of the fact that different season cohorts have different show counts. Can we say anything informative about how viewing has changed across the reports? I think the most we can gather from @tbl-across-season is that the views of a specific season are relatively stable for early seasons and grow slightly more volatile as you go up in season number. As mentioned above, I think the smaller pool of shows in later season cohorts is the cause of this, but we can actually see evidence of that in the table.
 
 ```{r, all_seasonal_shows}
 seasonal_all_shows <- shows_cleaned |> 
@@ -767,11 +767,75 @@ What's immediately apparently to me from @tbl-no-new-seasons is how stable the t
 
 ```{r, eval = FALSE}
 multi_report_shows |> 
-  filter(series %in% c("Stranger Things", 'Seinfeld', 'Virgin River')) |> 
-  calc_table_data(season, report_date, summary_func = mean) |> 
-  build_formatted_table(add_conditional_highlights = TRUE, season, report_date)
+  # filter(series %in% c("Stranger Things", 'Seinfeld', 'Virgin River')) |> 
+  filter(season %in% paste0("Season ", 1:7)) |>
+  group_by(series, report_date) |> 
+  filter(any(new_release == 'Maintenance')) |> 
+  calc_table_data(season, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = FALSE, season, report_date)
+
+# New season lift
+shows_cleaned |>
+  filter(season %in% paste0("Season ", 1:9)) |> 
+  ungroup() |> 
+  # filter(str_detect(season, "^Season") == TRUE) |> 
+  mutate(report_date = as.Date(report_date)) |> 
+  group_by(series, season, report_date) |> 
+  summarise(total_views = sum(views, na.rm = TRUE),
+            contains_new_season = any(new_release %in% c("New Season Lift"))) |> 
+  arrange(season, report_date) |> 
+  ungroup() |> 
+  group_by(series, season) |> 
+  mutate(dropoff = (total_views - lag(total_views))/lag(total_views)) |> 
+  ungroup() |> 
+  group_by(series) |> 
+  filter(report_date != min(report_date)) |> 
+  ungroup() |> 
+  group_by(series, season) |> 
+  filter(contains_new_season == TRUE) |> View()
+  ungroup() |> 
+  group_by(season, report_date) |> 
+  summarise(avg_lift = mean(dropoff, na.rm = TRUE)) |> 
+  arrange(season, report_date) |> 
+  pivot_wider(names_from = season, values_from = avg_lift) |> 
+  gt() |> 
+  format_table_header() |> 
+  format_table_style() |> 
+  format_table_numbers(scale_vals = TRUE)
+
+# maintenance shows  
+shows_cleaned |> 
+  group_by(series, season) |> 
+  filter(n_distinct(report_date) == 4) |> 
+  filter(season %in% paste0("Season ", 1:9)) |> 
+  filter(all(new_release == 'Maintenance')) |> 
+  group_by(series, season) |>
+  arrange(series, season, report_date) |> 
+  mutate(dropoff = (views - lag(views))/lag(views),
+         dropoff = if_else(is.na(dropoff), views, dropoff)) |> filter(dropoff == 0) |> View()
+  ungroup() |> 
+  group_by(season, report_date) |>
+  summarise(median_decay = median(dropoff, na.rm = TRUE)) |>  View()
+  arrange(season, report_date) |> 
+  pivot_wider(names_from = season, values_from = median_decay) |> 
+  gt() |> 
+  format_table_header() |> 
+  format_table_style() |> 
+  format_table_numbers(scale_vals = TRUE) |> 
+  fmt_number(columns = everything(),
+             rows = report_date == '2023-12-31',
+             decimals = 0)
+  
+  View()
+  
 ```
 
+```{r}
+shows_cleaned |> 
+  filter(series %in% c("Breaking Bad")) |> 
+  calc_table_data(season, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = FALSE, season, report_date)
+```
 
 ###
 
