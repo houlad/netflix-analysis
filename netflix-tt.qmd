@@ -333,16 +333,7 @@ time, I think I realized what is going on. My insight came when I reread the #ti
  *"This report, which captures ~99% of all viewing in the first half of 2025"*. I knew that, but I missed a fairly obvious implication of that
  seemingly minor detail. To see what I mean we need some quick napkin math. 
  
-The 2025 Jan-June report in our dataset(one of four six month report periods) has a total of roughly 10.5 billion views and 7,500 shows. 
-If 99% of viewing is ~10.5 billion total views, that last percent is probably something like ~100 million views. Given that 
-~1,900 of the 7,500 shows in the report have 100,000 views(the lowest amount shown in our dataset), it seems logical to assume that most/all of the
-shows in the excluded 1% have fewer than 100,000 views and thus we could be looking at potentially thousands of shows which were excluded from
-the report.  I can't say for sure since Netflix, to my knowledge, doesn't make a list of their full library publicly available, but it sure seems
-like we are dealing with a dataset that is a lot more truncated than it appears--at least for the really specific purpose I'm using it for.
-I think this effect could be even larger given that not only do the tails appear to be quite truncated, but the view counts themselves are heavily
-rounded and/or binned. ~1,900 shows didn't all miraculously have *exactly* 100,000 views. That is some form of rounding and/or binning and 
-without knowing more specifics about the methodology and the missing 1% of views I don't think I can conclusively say whether the distribution follows
-a power law or not.
+The 2025 Jan-June report in our dataset(one of four six month report periods) has a total of roughly 10.5 billion views and 7,500 shows. If 99% of viewing is ~10.5 billion total views, that last percent is probably something like ~100 million views. Given that ~1,900 of the 7,500 shows in the report have 100,000 views(the lowest amount shown in our dataset), it seems logical to assume that most/all of the shows in the excluded 1% have fewer than 100,000 views and thus we could be looking at potentially thousands of shows which were excluded from the report.  I can't say for sure since Netflix, to my knowledge, doesn't make a list of their full library publicly available, but it sure seems like we are dealing with a dataset that is a lot more truncated than it appears--at least for the really specific purpose I'm using it for. I think this effect could be even larger given that not only do the tails appear to be quite truncated, but the view counts themselves are heavily rounded and/or binned. ~1,900 shows didn't all miraculously have *exactly* 100,000 views. That is some form of rounding and/or binning and without knowing more specifics about the methodology and the missing 1% of views I don't think I can conclusively say whether the distribution follows a power law or not.
 
 All the power law shenaigans aside, this is still, I think, a really interesting result. Just 100 shows are needed to cover nearly 25% of all views on 
 Netflix. That is mindboggling and brings up so many questions. Perhaps the one I'm most interested in--but one which I can't remotely answer with the
@@ -717,17 +708,19 @@ new_seasons <- shows_cleaned |>
 
 ![Total views, by season and report: Only premiers](new_seasons.png){.lightbox #tbl-only-new-seasons}
 
-As you can see in @tbl-no-new-seasons, the view variance for the data without any new seasons is much lower than the full dataset. Contrasting this with @tbl-only-new-seasons the difference is night and day. There is much less data(look at the 'starting' view counts in the first rows), so I expect these numbers to jump around more, but these numbers appear totally driven by whether a popular show happened to have a new, for instance, 5th season launch in the 2025 report. This illustrates nicely how limited this way of aggregating the data is. Perhaps there are better ways to look at this data...
+As you can see in @tbl-no-new-seasons, the view variance for the data without any new seasons is much lower than the full dataset. Contrasting this with @tbl-only-new-seasons the difference is night and day. There is much less data(look at the 'starting' view counts in the first rows), so I expect these numbers to jump around more, but these numbers appear totally driven by whether a popular show happened to have a new, for instance, 5th season launch in the 2025 report. This illustrates nicely how limited this way of aggregating is. Perhaps there are better ways to look at this data...
 
-### What Sort of Effect does a New Season Release Have on Old Seasons?
+### What Sort of Effect Does a New Season Release Have on Old Seasons?
 
-So looking at total viewership is a perfectly fine metric, but one of the things I'm actually interested in(and Netflix is certainly interested in) is how much new seasons of shows effect the viewership of old seasons. If you are in the entertainment business, this has to be one of your key metrics. If you know this number and you know what shows are currently in production, then you can make a pretty good guess and what your viewership numbers will look like in the next month/quarter/year/etc. 
+Looking at total viewership like we did above is a perfectly worthwhile endeavor, but it can't be used to answer one of the questions I'm(and certainly Netflix) most interested in: how much of an effect(lift) does the release of a new season have on the viewership of old seasons. If you are in the entertainment business, this has to be one of your key metrics. If you know this number and you know what shows are currently in production, then you can make a pretty good guess at what your viewership numbers will look like in the next month/quarter/year/etc. Calculating this is simple, but easy to mess up. What we want is the mean percent difference in views from the last period, but we only want this for reports where a new season has premiered. For example, say a show premiers a fifth season in the 2025 report. The only data I'm interested in for this calculation is the difference in season 1-4 views from the report prior(the 2024-12-31 report) to the 2025 report. The code in the fold[^intricate-grouping] calculates this percent change for each individual show and then takes the mean to give us the average lift a new season provides to, say, season 1 viewing. 
 
-```{r, new-season-lift}
-shows_cleaned |>
+[^intricate-grouping]: You can see in the cold fold that there is a lot of grouping and ungrouping, but it is all necessary to make sure we are calculating within the correct groups at the correct time.
+
+```{r, new-season-lift-mean}
+# New season lift
+new_season_lift <- shows_cleaned |>
   ungroup() |> 
   filter(season %in% paste0("Season ", 1:9)) |> 
-  # filter(str_detect(season, "^Season") == TRUE) |> 
   mutate(report_date = as.Date(report_date)) |> 
   # want total views by show, season and report
   group_by(series, season, report_date) |> 
@@ -736,13 +729,14 @@ shows_cleaned |>
   arrange(season, report_date) |> 
   ungroup() |> 
   group_by(series, season) |> 
-  mutate(dropoff = (total_views - lag(total_views))/lag(total_views)) |> 
+  mutate(dropoff = (total_views - lag(total_views))/lag(total_views)) |>
   ungroup() |> 
   group_by(series) |> 
-  # can't tell the lift from a new season occuring in the first report because we don't have that information
+  # can't calculate lift from a new season occuring in the first report-it's the first report
   filter(report_date != min(report_date)) |> 
   ungroup() |> 
   group_by(series, season) |> 
+  # after lift/decay from previous season calculated, filter to only series(season) where a new season released during that report
   filter(contains_new_season == TRUE) |> 
   ungroup() |> 
   group_by(season, report_date) |> 
@@ -754,24 +748,61 @@ shows_cleaned |>
   format_table_style() |> 
   format_table_numbers(scale_vals = TRUE)
 
+# gtsave(new_season_lift, "new_season_lift.png")
+```
 
+```{r, new-season-lift-median}
+new_season_lift_median <- shows_cleaned |>
+  ungroup() |> 
+  filter(season %in% paste0("Season ", 1:9)) |> 
+  mutate(report_date = as.Date(report_date)) |> 
+  # want total views by show, season and report
+  group_by(series, season, report_date) |> 
+  summarise(total_views = sum(views, na.rm = TRUE),
+            contains_new_season = any(new_release %in% c("New Season Lift"))) |> 
+  arrange(season, report_date) |> 
+  ungroup() |> 
+  group_by(series, season) |> 
+  mutate(dropoff = (total_views - lag(total_views))/lag(total_views)) |>
+  ungroup() |> 
+  group_by(series) |> 
+  # can't calculate lift from a new season occuring in the first report-it's the first report
+  filter(report_date != min(report_date)) |> 
+  ungroup() |> 
+  group_by(series, season) |> 
+  # after lift/decay from previous season calculated, filter to only series(season) where a new season released during that report
+  filter(contains_new_season == TRUE) |> 
+  ungroup() |> 
+  group_by(season, report_date) |> 
+  summarise(avg_lift = median(dropoff, na.rm = TRUE)) |> 
+  arrange(season, report_date) |> 
+  pivot_wider(names_from = season, values_from = avg_lift) |> 
+  gt() |> 
+  format_table_header() |> 
+  format_table_style() |> 
+  format_table_numbers(scale_vals = TRUE)
+
+# gtsave(new_season_lift_median, "new_season_lift_median.png")
 ```
 
 
-```{r, eval = FALSE}
-multi_report_shows |> 
-  # filter(series %in% c("Stranger Things", 'Seinfeld', 'Virgin River')) |> 
-  filter(season %in% paste0("Season ", 1:7)) |>
-  group_by(series, report_date) |> 
-  filter(any(new_release == 'Maintenance')) |> 
-  calc_table_data(season, report_date, summary_func = sum) |> 
-  build_formatted_table(add_conditional_highlights = FALSE, season, report_date)
+![Mean % increase in views during report period with a season premier](new_season_lift.png){.lightbox #tbl-new-season-lift}
 
-# New season lift
+@tbl-new-season-lift is the result of this calculation. As you'd expect, new seasons do lift the viewership of older seasons. Intuitively we understand this. Say two or three years have passed since your favorite show last had a new season. You might want to rewatch all those old seasons so you remember what was going on. Or you may be a new viewer who saw the advertising for the new season and that prompted you to dig back into the library so you could experience the show from the beginning. @tbl-new-season-lift gives concrete data to this intuition. A new season premiering raises the views of season 1 of that series by between 133-521% depending on the report. What's more, this lift decreases season-on-season. So a new season lifts season 1 views a lot, but it lifts the views of season 2, 3, etc. less and less. Maybe people are most nostalgic for the early seasons and those are most likely to get rewatched. Maybe new viewers watch just the first season or two so they know what is going on the the new season. Maybe the release cadence of shows with  8, 9, 10 seasons is such that viewers don't feel the need to refresh their memory since the last season didn't premier *that* long ago. I can think of all sorts of reasons why this lift might decay over the seasons, but the fact that the new season lift is so pronounced in the early seasons seems pretty important. New seasons not only draw a bunch of views to the new season itself, they draw new views to the old seasons too. In a sense, you could add the bump in views the old seasons get to the views of the new season to get the 'true' impact on views of the new season. These new seasons extend the lifespan of the show on both ends-the new seasons feed new and older viewers alike back into the show's pipeline to watch the previous seasons, extending the viewing time the show can extract from the viewer.
+
+One final point about @tbl-new-season-lift. This calculation still suffers from the small data problem encountered in the previous section when we get to later seasons--really seasons above, say, season 6. There are just not that many shows that had a new 6th season premier in the dataset, so the calculations for these later season lifts are based on a small handful of shows. That means they should be taken with a healthy dose of skepticism since a single show can wildly skew the numbers for a reporting period. Why didn't I take a median instead of a mean to alievate some of this concern? Well, I did[^new-season-lift-median-tbl], it just didn't really change much and more people understand mean than median.
 
 
+[^new-season-lift-median-tbl]: ![Median % increase in views during report period with a season premier](new_season_lift_median.png){.lightbox #tbl-new-season-lift-median} 
+
+### How Quickly Does Viewing Decay for Shows Without New Seasons?
+
+Now that we more or less know the effect of a new season on viewing, a logical next question is what about those shows that don't have the benefit of a new season bump? Are their viewing numbers just permanently decaying? Calculating this is quite similar to the lift calculation above, but the grouping is slightly different and we are filtering out a different subsection of the data. We are only looking at show seasons that have been in all four reports and that were in maintenance(i.e. they didn't have a new season premier) that entire time.  Ideally, I wouldn't need to restrict this to shows that were in all four reports, but for certain 'reasons'[^season-pop-ins] this is necessary to ensure our comparisons are comparing what we think they are. 
+
+
+```{r, maintenance-show-decay-median}
 # maintenance shows  
-shows_cleaned |> 
+maintenance_decay_median <- shows_cleaned |> 
   group_by(series, season) |> 
   filter(n_distinct(report_date) == 4) |>
   filter(season %in% paste0("Season ", 1:9)) |> 
@@ -793,6 +824,100 @@ shows_cleaned |>
              rows = report_date == '2023-12-31',
              decimals = 0)
   
+# gtsave(maintenance_decay_median, "maintenance_decay_median.png")
+```
+
+```{r, maintenance-show-decay-mean}
+# maintenance shows  
+maintenance_decay_mean <- shows_cleaned |> 
+  group_by(series, season) |> 
+  filter(n_distinct(report_date) == 4) |>
+  filter(season %in% paste0("Season ", 1:9)) |> 
+  filter(all(new_release == 'Maintenance')) |> 
+  group_by(series, season) |>
+  arrange(series, season, report_date) |> 
+  mutate(dropoff = (views - lag(views))/lag(views),
+         dropoff = if_else(is.na(dropoff), views, dropoff)) |> 
+  ungroup() |> 
+  group_by(season, report_date) |>
+  summarise(median_decay = mean(dropoff, na.rm = TRUE)) |>  
+  arrange(season, report_date) |> 
+  pivot_wider(names_from = season, values_from = median_decay) |> 
+  gt() |> 
+  format_table_header() |> 
+  format_table_style() |> 
+  format_table_numbers(scale_vals = TRUE) |> 
+  fmt_number(columns = everything(),
+             rows = report_date == '2023-12-31',
+             decimals = 0)
+  
+# gtsave(maintenance_decay_mean, "maintenance_decay_mean.png")
+```
+
+Anyway, @tbl-maintenance-decay-median shows the results of this calculation and they are pretty informative[^similarity-to-above], but a little explanation is needed. Most seasons do decay when a show is in maintenance mode. Unlike with the lift calculations above, this effect appears quite consistent across all seasons. What *is* unusual is the solid row of zeros for the 2025 report. What the heck is that? Well, hopefully you noticed that @tbl-maintenance-decay-median uses median calculations. This was to lessen the impact of single shows in the later seasons that have fewer shows, but this also produced the zeros. Because of the way the views are binned[^view-binning] it is not uncommon for these maintenance shows to have the same number of views from report to report. So when you order these dropoff calculations, you wind up with a whole lot of zeros in the middle and so the median ends up being zero. Essentially, the most common(yes, I know that's the mode) decay amount for maintenance shows after they've been in maintenance for a while is for their numbers to go unchanged. This doesn't seem unreasonable at all, but if you are scared by this, I'll include the mean table in the footnotes[^maintenance-decay-mean]. I think my takeaway from this is that once a show is in maintenance, views will decline steadily, but they can only go so far(at least in this dataset). Eventually, you reach a level where most people have stopped watching, but people who are superfans(think something like The Office where people rewatch over and over) continue to watch no matter how many times they've seen it. Perhaps they put it on for ambient noise during dinner or they use it to fall asleep to at night. The point is, it seems entirely reasonable that you could reach a view plateau on shows in maintenance where some subset of subscribers will continue to watch until that show is pulled from the library.
+
+![Median view decay for shows in maintenance in all reports](maintenance_decay_median.png){.lightbox #tbl-maintenance-decay-median}
+
+[^season-pop-ins]: Sometimes a show will have seasons 1 and 2 in the 2023 report and then seasons 1 and 4 in the next report. This combined with the way shows are classified under new_release(by a binning of release_date, which not all shows have) means that in order to make sure our comparisons aren't accidently skewed by new entries into the dataset(that functions very similarly to a new season) we have to restrict the data we are working with to show seasons that are present in all four reports.
+
+[^similarity-to-above]: Isn't this table calculating something similar to @tbl-no-new-seasons? Yes, but the subset of data is different--for the reasons outlined in the last footnote--which results in a cleaner comparison of shows that don't get the view bump of new seasons appearing in the dataset.
+
+[^view-binning]: Views are rounded and/or binned in some unspecified way. So we have, on the low end, values like 50,000 or 100,000 views, never 52,183. This means that when we compare shows with low viewership across reports and seasons, they often wind up having the same view number time and time again. Obviously, the exact same number of people didn't view these shows every report, but for many different reasons, that's how Netflix chooses to release this viewing data.
+
+[^maintenance-decay-mean]: ![Mean view decay for shows in maintenance in all reports](maintenance_decay_mean.png){.lightbox #tbl-maintenance-decay-mean}
+
+
+#### Does Maintenance Decay Look Any Different for Limited Series?
+
+In the last section we looked at seasonal shows in maintenance, but there are also, as Netflix calls them, Limited Series aka Mini-Series. These are one-off series that are conceived from the beginning as a single set of episodes telling a complete story. These are often extremely popular(Adolescence is one and it's the most viewed show in the dataset), but they are also more limited in their reach. As we saw with the new season lift calculations, new seasons of seasonal shows not only inject a bunch of new views for that new season, they bring views back to the older seasons as well. Limited series don't get the benefit of those new season bumps, so I would expect their views to start strong and then drop off steadily in each successive report.
+
+```{r, limited_series_decay}
+limited_series_decay <- shows_cleaned |>
+  group_by(series, season) |> 
+  filter(n_distinct(report_date) == 4) |>
+  ungroup() |> 
+  filter(season == 'Limited Series') |> 
+  group_by(series) |>
+  arrange(series, report_date) |> 
+  mutate(dropoff = (views-lag(views))/lag(views),
+         viral_show = max(views) > 15000000) |>  
+  group_by(report_date, viral_show) |> 
+  summarise(median_dropoff = median(dropoff, na.rm = TRUE)) |> 
+  ungroup() |> 
+  filter(report_date != '2023-12-31') |> 
+  pivot_wider(names_from = viral_show, values_from = median_dropoff) |> 
+  rename(`<10M peak views` = `FALSE`, `>10M peak views` = `TRUE`) |> 
+  gt() |> 
+  format_table_header() |> 
+  format_table_style() |> 
+  format_table_numbers(scale_vals = TRUE) |> 
+  fmt_number(columns = everything(),
+             rows = report_date == '2023-12-31',
+             decimals = 0)
+
+# gtsave(limited_series_decay, 'limited_series_decay.png')
+
+```
+
+This is basically what we see, but with one big caveat. @tbl-limited-series-decay shows the median report-over-report decline in views for limited series, but also subdivided into shows that peaked at 10 million views or more and those that did not. What we see is that the most popular shows suffer the most extreme dropoffs in views. The 'popular' series on average shed ~91% of their views from the first to last report period while the 'less popular' shows only shed ~35% of their views. This isn't some profound conclusion--no show can continue to draw 50 million views report after report. This does illustrate the difference between a limited series and a seasonal show though. You expect the limited series to burn brightly and then fade quickly. People like to watch what's popular so they can talk about it with their friends/family/collegues. But when that initial surge of virality is over, people move on to the next thing. With season shows, the shows will keep building a fan base over the years. So they can experience those similar moments of virality when a new season premiers, but they also have their back catalog their fans can go back to and sate their thirst with through the drought to the next season.
+
+![Limited Series View Decay, subdivided by initial peak views](limited_series_decay.png){.lightbox #tbl-limited-series-decay}
+
+
+
+```{r, eval = FALSE}
+multi_report_shows |> 
+  # filter(series %in% c("Stranger Things", 'Seinfeld', 'Virgin River')) |> 
+  filter(season %in% paste0("Season ", 1:7)) |>
+  group_by(series, report_date) |> 
+  filter(any(new_release == 'Maintenance')) |> 
+  calc_table_data(season, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = FALSE, season, report_date)
+
+
+
+
+  
 # new season dropoff; how much do views of a new season of show X  change from one new season to the next eg S1 -> S2
 shows_cleaned |> 
   filter(new_release == 'New Season', show_type == "Multi Season", startsWith(season, 'Season ')) |>
@@ -802,8 +927,9 @@ shows_cleaned |>
   group_by(series) |> 
   arrange(series, as.numeric(season_number)) |> 
   mutate(dropoff = (views - lag(views))/lag(views)) |> 
+  # filter(!is.na(dropoff)) |> View()
   ungroup() |> 
-  summarise(median_dropoff = median(dropoff, na.rm = TRUE))
+  summarise(median_dropoff = mean(dropoff, na.rm = TRUE))
 
 
 shows_cleaned |> 
@@ -1195,28 +1321,7 @@ multi_report_shows |>
 
 #### Limited Series 
 
-```{r, limited_series_decay, eval = FALSE}
-multi_report_shows |> 
-  ungroup() |> 
-  filter(season == 'Limited Series') |> 
-  group_by(series) |>
-  arrange(series, report_date) |> 
-  mutate(dropoff = (views-lag(views))/lag(views),
-         dropoff = if_else(is.na(dropoff), views, dropoff)) |>
-  ungroup() |> 
-  group_by(report_date) |> 
-  summarise(median_dropoff = mean(dropoff)) |> 
-  gt() |> 
-  format_table_header() |> 
-  format_table_style() |> 
-  format_table_numbers(scale_vals = TRUE) |> 
-  fmt_number(columns = everything(),
-             rows = report_date == '2023-12-31',
-             decimals = 0)
-  View()
 
-
-```
 
 
 ```{r, eval = FALSE}
