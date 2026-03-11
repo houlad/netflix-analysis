@@ -869,7 +869,7 @@ Anyway, @tbl-maintenance-decay-median shows the results of this calculation and 
 
 #### Does Maintenance Decay Look Any Different for Limited Series?
 
-In the last section we looked at seasonal shows in maintenance, but there are also, as Netflix calls them, Limited Series aka Mini-Series. These are one-off series that are conceived from the beginning as a single set of episodes telling a complete story. These are often extremely popular(Adolescence is one and it's the most viewed show in the dataset), but they are also more limited in their reach. As we saw with the new season lift calculations, new seasons of seasonal shows not only inject a bunch of new views for that new season, they bring views back to the older seasons as well. Limited series don't get the benefit of those new season bumps, so I would expect their views to start strong and then drop off steadily in each successive report.
+In the last section we looked at seasonal shows in maintenance, but there are also, as Netflix calls them, Limited Series aka Mini-Series. These are one-off series that are conceived from the beginning as a single set of episodes telling a complete story. These are often extremely popular(the most viewed show in the dataset, Adolescence, is a Limited Series), but they are also more limited in their reach. As we saw with the new season lift calculations, new seasons of seasonal shows not only inject a bunch of new views into the new season, they bring views back to the older seasons as well. Limited series don't get the benefit of those new season bumps, so I would expect their views to start strong and then drop off steadily in each successive report.
 
 ```{r, limited_series_decay}
 limited_series_decay <- shows_cleaned |>
@@ -899,10 +899,72 @@ limited_series_decay <- shows_cleaned |>
 
 ```
 
-This is basically what we see, but with one big caveat. @tbl-limited-series-decay shows the median report-over-report decline in views for limited series, but also subdivided into shows that peaked at 10 million views or more and those that did not. What we see is that the most popular shows suffer the most extreme dropoffs in views. The 'popular' series on average shed ~91% of their views from the first to last report period while the 'less popular' shows only shed ~35% of their views. This isn't some profound conclusion--no show can continue to draw 50 million views report after report. This does illustrate the difference between a limited series and a seasonal show though. You expect the limited series to burn brightly and then fade quickly. People like to watch what's popular so they can talk about it with their friends/family/collegues. But when that initial surge of virality is over, people move on to the next thing. With season shows, the shows will keep building a fan base over the years. So they can experience those similar moments of virality when a new season premiers, but they also have their back catalog their fans can go back to and sate their thirst with through the drought to the next season.
+This is basically what we see, but with one big caveat. @tbl-limited-series-decay shows the median report-over-report decline in views for limited series, but also subdivided into shows that peaked at 10 million views or more and those that did not. What we see is that the most popular shows suffer the most extreme dropoffs in views. The 'popular' series on average shed ~91% of their views from the first to last report period while the 'less popular' shows only shed ~35% of their views. This isn't some profound conclusion--no show can continue to draw 50 million views report after report--but this does illustrate the difference between a limited series and a seasonal show. You expect the limited series to burn brightly and then fade quickly. People like to watch what's popular so they can talk about it with their friends/family/collegues. When that initial surge of virality is over, people move on to the next thing. With seasonal shows, you can keep building a fan base over many years. They can experience similar moments of virality when a new season premiers, but they also have a back catalog their fans can go back to and sate their thirst while they wait out the content drought till the next season.
 
-![Limited Series View Decay, subdivided by initial peak views](limited_series_decay.png){.lightbox #tbl-limited-series-decay}
+![Limited series median view decay, subdivided by initial peak views](limited_series_decay.png){.lightbox #tbl-limited-series-decay}
 
+
+### Do New Seasons Get More or Less Popular as Series Go On?
+
+The final question I want to address in part one is what the trajectory of the new seasons looks like. Essentially, are new seasons of Bridgerton growing season after season or has the viewership peaked and is now decaying? In many ways this is a silly question to ask in the aggregate--of course every show has a unique growth profile. Some are like Breaking Bad and grow season after season, attracting new viewers their entire run. Others start strong, but, for any number of reasons, fail to maintain that growth and wither over the seasons. Why I'm asking this question at the aggregate level is to see if I can get a sense of what you'd expect from any random show. If you don't know anything else about a show(other than the fact it was popular enough to be picked up for another season), what amount of growth/decay would you expect for their next new season?
+
+We can calculate this pretty simply after we filter out the shows that had two or more new seasons premier during the ~2 years covered by the dataset. This is a modest number of shows(80), but I can use some statistics to get a little more confidence in our numbers. @fig-six shows the bootstrap distribution of the median percent change[^log-ratio] from one new season to the next. What I've done is generate a bootstrap distribution of 10,000 medians--essentially, I take the 80 original values, resample them with replacement, then calculate a median value. I do this 10,000 times and that gives me a sampling distribution of medians I can use to construct a confidence interval. With @fig-six we can see that the most likely change is ~-20%, but we shouldn't be surprised to see drops anywhere in the ~13-35% range. From this I can surmise that a typical show will lose viewership over its seasons. This doesn't mean no shows experience that Breaking Bad style growth from beginning to end, it just means it's relatively more common for shows to lose viewers rather than gain them.
+
+
+
+[^log-ratio]: I actually use a logratio calculation here instead of a simple percent change. This is just log(views2/views1). I do this since the data could be otherwise skewed by the asymmetry of the percent change in views: i.e. a show could increase it's views by 1000%+, but it can only decrease it's views by -100%. Using the logratio alleviates that concern and then I can exponentiate at the end to convert back into nice interpretable percentages. 
+
+```{r, new_seasons_change, eval = FALSE}
+library(infer)
+
+multiple_new_season_shows <- 
+  shows_cleaned |> 
+  filter(new_release == 'New Season', show_type == "Multi Season", startsWith(season, 'Season ')) |>
+  group_by(series) |> 
+  filter(n() > 1) |>
+  ungroup() |> 
+  group_by(series) |> 
+  arrange(series, as.numeric(season_number)) |> 
+  #use a logratio to try to blunt the effects of the lift/decay imbalance-eg a show can increase it's views
+  #by 10000%+, but it can only lose 100% of it's audience. logratio balances this out and I can exponentiate
+  #at the end to get back to interpretable numbers
+  mutate(logratio = log(views/lag(views))) |> 
+  #there will be at least two rows for every show(first new season, second new season), but one of those will
+  # be NA since it's the first value. I only want the lift/decay value
+  filter(!is.na(logratio))
+
+# create a bootstrap distribution of these 80 values
+boot_dist <- multiple_new_season_shows |> 
+  specify(response = logratio) |> 
+  generate(reps = 10000, type = 'bootstrap') |> 
+  calculate(stat = 'median')
+
+# calculate the sample median
+sample_median <- multiple_new_season_shows |> 
+  specify(response = logratio) |> 
+  calculate(stat = 'median')
+
+# calculate 95% confidence interval; default is percentile method and with the small-ish sample size I'll
+# stick with that. Both methods give approximately the same answer
+ci <- boot_dist |> 
+  get_confidence_interval(level = .95)
+
+
+ci_bootstrap_dist <- boot_dist |> 
+  mutate(stat = exp(stat) -1 ) |>
+  visualize() +
+  # shade_p_value(obs_stat = exp(sample_median)-1, direction = 'one_sided') +
+  shade_confidence_interval(exp(ci) -1, alpha = .25)+
+  my_plot_theme()+
+  labs(title = 'Median % Change in Views(From Last New Season)',
+       subtitle = 'Simulation-Based Bootstrap Distribution',
+       x = 'Median % Change')+
+  scale_x_continuous(labels = scales::percent_format())
+
+ggsave("ci_bootstrap_dist.png", ci_bootstrap_dist, width = 10, height = 8)
+```
+
+![Median % change in views from last new season](ci_bootstrap_dist.png){.lightbox #fig-six}
 
 
 ```{r, eval = FALSE}
@@ -915,23 +977,14 @@ multi_report_shows |>
   build_formatted_table(add_conditional_highlights = FALSE, season, report_date)
 
 
-
-
+boot_dist |> 
+  mutate(stat = exp(stat) -1 ) |> 
+  visualize() +
+  shade_p_value(obs_stat = exp(sample_median)-1, direction = 'one_sided') +
+  shade_confidence_interval(ci, alpha = .25)+
+  my_plot_theme()
   
-# new season dropoff; how much do views of a new season of show X  change from one new season to the next eg S1 -> S2
-shows_cleaned |> 
-  filter(new_release == 'New Season', show_type == "Multi Season", startsWith(season, 'Season ')) |>
-  group_by(series) |> 
-  filter(n() > 1) |> 
-  ungroup() |> 
-  group_by(series) |> 
-  arrange(series, as.numeric(season_number)) |> 
-  mutate(dropoff = (views - lag(views))/lag(views)) |> 
-  # filter(!is.na(dropoff)) |> View()
-  ungroup() |> 
-  summarise(median_dropoff = mean(dropoff, na.rm = TRUE))
-
-
+  
 shows_cleaned |> 
   # filter(series %in% c("Bridgerton")) |>  
   filter(season != 'Limited Series') |> 
