@@ -344,6 +344,7 @@ rows deep(or not displayed at all in Netflix's suggested shows) hinder viewershi
 to figure these sorts of numbers out, but man I would love to get my hands on the data I'd need for this sort of analysis.
 
 ### A Brief Note on Empirical Cumulative Distribution Functions
+
 As I noted in the introduction, my cumulative view plots sure sound an awful lot like an empirical cumulative distribution function. And that's
 true, they are similar, but subtly different. To see the difference in their interpretation, let's look at them side by side.
 
@@ -429,10 +430,7 @@ comparison_plot_logged <- (full_shows_ecdf_comp_logged + ecdf_log_plot)+
 
 ![Comparing Cumulative Viewing vs ECDF Plots, logged](comparison_plot_logged.png){.lightbox #fig-five}
 
-With our axes logged, both plots offer greater detail of the tails. Plot B of @fig-five has a stepped appearance which indicates that the view
-counts are discrete and binned. It's possible to examine data that was in the extreme tails in @fig-four but is now 
-interpretable. For example, I can see that 70% of shows have 1 million views or less, a data point that was lost in the 
-tail before.
+With our axes logged, both plots offer greater detail of the tails. Plot B of @fig-five has a stepped appearance which indicates that the view counts are discrete and binned. It's possible to examine data that was in the extreme tails in @fig-four but is now interpretable. For example, I can see that 70% of shows have 1 million views or less, a data point that was lost in the tail before.
 
 ## How Does Viewing Change Across Reports?
 
@@ -533,7 +531,7 @@ calc_table_data <- function(data, summary_func = sum,  ...){
       ungroup() |>
       group_by(!!!grouping_vars) |>
       mutate(contains_new_season = case_when(
-                                    new_release %in% c( "New Season Lift") ~ TRUE,
+                                    new_release %in% c( "New Season", "New Season Lift") ~ TRUE,
                                     .default = FALSE)) |>
       summarise(!!col_name := rlang::exec(summary_func, views, na.rm = TRUE),
                 contains_new_season = any(contains_new_season),# logical flag per series per report_date
@@ -908,7 +906,7 @@ This is basically what we see, but with one big caveat. @tbl-limited-series-deca
 
 The final question I want to address in part one is what the trajectory of the new seasons looks like. Essentially, are new seasons of Bridgerton growing season after season or has the viewership peaked and is now decaying? In many ways this is a silly question to ask in the aggregate--of course every show has a unique growth profile. Some are like Breaking Bad and grow season after season, attracting new viewers their entire run. Others start strong, but, for any number of reasons, fail to maintain that growth and wither over the seasons. Why I'm asking this question at the aggregate level is to see if I can get a sense of what you'd expect from any random show. If you don't know anything else about a show(other than the fact it was popular enough to be picked up for another season), what amount of growth/decay would you expect for their next new season?
 
-We can calculate this pretty simply after we filter out the shows that had two or more new seasons premier during the ~2 years covered by the dataset. This is a modest number of shows(80), but I can use some statistics to get a little more confidence in our numbers. @fig-six shows the bootstrap distribution of the median percent change[^log-ratio] from one new season to the next. What I've done is generate a bootstrap distribution of 10,000 medians--essentially, I take the 80 original values, resample them with replacement, then calculate a median value. I do this 10,000 times and that gives me a sampling distribution of medians I can use to construct a confidence interval. With @fig-six we can see that the most likely change is ~-20%, but we shouldn't be surprised to see drops anywhere in the ~13-35% range. From this I can surmise that a typical show will lose viewership over its seasons. This doesn't mean no shows experience that Breaking Bad style growth from beginning to end, it just means it's relatively more common for shows to lose viewers rather than gain them.
+We can calculate this pretty simply after we filter out the shows that had two or more new seasons premier during the ~2 years covered by the dataset. This is a modest number of shows(80), but I can use some statistics to get a little more confidence in our numbers. @fig-six shows the distribution of the median percent change[^log-ratio] from one new season to the next. What I've done is generate a bootstrap distribution of 10,000 medians--essentially, I take the 80 original values, resample them with replacement, then calculate a median value. I do this 10,000 times and that gives me a sampling distribution of medians I can use to construct a confidence interval(the light green shaded region). With @fig-six we can see that the most likely change is ~-20%, but we shouldn't be surprised to see drops anywhere in the ~13-35% range. From this I can surmise that a typical show will lose viewership over its seasons. This doesn't mean no shows experience that Breaking Bad style growth from beginning to end, it just means it's relatively more common for shows to lose viewers rather than gain them.
 
 
 
@@ -966,6 +964,163 @@ ggsave("ci_bootstrap_dist.png", ci_bootstrap_dist, width = 10, height = 8)
 
 ![Median % change in views from last new season](ci_bootstrap_dist.png){.lightbox #fig-six}
 
+### Individual Netflix Viewership
+
+Finally we can move on to part two--looking at individual series. With this we are moving away from looking at the '*typical*' show and moving to the actual behavior of specific shows. I'm still interested in similar questions of new season lift and view decay, but now I'm concerned with how viewership health for Stranger Things or Bridgerton looks. It's worth noting at the outset that a combination of the two levels--comparing typical show behavior to specific show behavior--is certainly very valuable in a business setting, but I'm not going to be too concerned with that here. I simply want to examine how a handful of shows are doing. I'll leave the comparative analysis to a curious reader.
+
+
+#### 'Older' Shows Without New Seasons
+Let's start with a random(*cough* randomly chosen by me *cough*) set of popular shows that are older or don't have new seasons in the dataset. 
+
+```{r, total_views_by_show_per_report}
+total_views_by_show_per_report <- shows_cleaned |> 
+  filter(startsWith(series, 'Suits')| 
+           series %in% c('Seinfeld', 'Breaking Bad', 'Arrested Development', 'Peaky Blinders', 'Stranger Things')) |> 
+  calc_table_data(series, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, series, report_date)
+
+# gtsave(total_views_by_show_per_report, "total_views_by_show_per_report.png")
+```
+
+![Total views(or % change from previous) per report of selected shows](total_views_by_show_per_report.png){.lightbox #tbl-total-views-by-show}
+
+In @tbl-total-views-by-show we are looking at the total views(sum of all seasons) of the selected shows. Before we start looking at the data, I just want to make sure I point out that since we are looking at total views, this will skew things slightly--shows with more seasons-like Suits and Seinfeld-will probably have more views. I could, and did, look at the mean views per season, but the analysis doesn't really change and I think the total is a more intuitive way to convey how many eyeballs these shows are capturing for Netflix.
+
+So we can see that Breaking Bad and Seinfeld still drew in ~36 million and ~40 million views respectively in the 2023 report even though they went into syndication a decade ago with Breaking Bad and nearly 30 years ago with Seinfeld! What's perhaps even more amazing is that neither of them are losing viewers at an alarming rate. Seinfeld only lost 10-15% in the next two reports and then stabilized in the 2025 report, while Breaking Bad has actually gained viewers since the 2023 report. These 'old' shows even outdo Netflix tentpole franchises like Stranger Things, though this is a tricky comparison since Stranger Things is still technically producing new seasons, but it's been a long time since the first season premiered. Also, unlike Breaking Bad and Seinfeld, Stranger Things has actually gained viewership(roughly 50% overall) since 2023, likely because the 5th and final season was set to premier in the second half of 2025 and so there was heavy advertising and people were watching to refresh their memories. 
+
+One last show I wanted to highlight was Suits. Suits is a bit of a weird one in the dataset in that it's a pretty old show(it ran 2011-2019 on USA network), but it was immensely popular when Netflix added it to their catalog. It was relatively popular during it's initial airing, but I'm not really sure why it took off so fast on Netflix-it gardnered over 144 million views in 2023 and was the top performing show on the platform for a while! However, unlike shows like Breaking Bad or Seinfeld, Suits did experience a huge falloff, losing ~65% of it's views by the 2025 report. It still is pulling in ~50 million views in the 2025 report, but it's days of leading the platform are probably over.
+
+
+#### Popular Shows With New Seasons
+
+Moving on to looking at some series that are popular right now we have @tbl-total-views-popular-shows.
+```{r, total_views_popular_shows_new_seasons}
+total_views_popular_shows <- shows_cleaned |> 
+  filter(startsWith(title, 'Bridgerton: Season')|
+           startsWith(title, 'Squid Game: Season')|series %in% c("3 Body Problem", 'Emily in Paris', 'Virgin River', 'Lupin')) |>  
+  calc_table_data(series, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, series, report_date)
+
+# gtsave(total_views_popular_shows, "total_views_popular_shows.png")
+```
+
+![Total views(or % change from previous) per report of selected popular shows](total_views_popular_shows.png){.lightbox #tbl-total-views-popular-shows}
+
+Cells in yellow indicate that the show released a new season during that report. As you can see from the table, these shows have explosive view growth when a new season releases. One of the most popular and talked about series right now is Bridgerton. Its total views increased by over 1,000% in 2024 when the third season premiered! All these shows are perfect examples of what we uncovered in the overall section before: new seasons spike views immensely during the reporting period they're released, but that spike is followed by precipitous declines the following report. This only makes sense as people watch and move on to the next new show capturing public attention, but it's still interesting to see how pronounced the effect is at the individual show level.
+
+The most interesting data point in @tbl-total-views-popular-shows is probably the Squid Game column. You can see that it exhibits the typical explosive growth expected when a popular series releases a new season, but even for these shows ~1,800% is high. And how does it manage to maintain over 100% growth the following report as well? Well, not to get too into the weeds here, but this is for two reasons. One, Squid Game is one of the few(only?) shows to release a new season in back-to-back reports--the second half of 2024 and the first half of 2025. This means it gets a kind of double jump increase in views during those reports. Secondly, the release timing of the new Squid Game seasons reveals a limitation of the way this analysis is done. The second and third seasons of Squid Game released five and three days before the end of their report periods respectively. This means that a huge chunk of their lift views are actually in the following report, not the report in which they were released. There is not a lot I can do aside from acknowledging this, but the effect is that season two's lift is distributed over two report periods instead of one. The same goes for season three, but I don't have that data yet so I can't say what the numbers are. The combination of these two factors results in this unusual extended view lift across two reports. This straddling effect is present throughout the dataset, but it isn't really a flaw of the analysis. I think a likely explanation is that the release timing of seasons near the end of of reports is a highly strategic move from Netflix. By releasing popular series' straddled over two reports, they are able to show increased view numbers to shareholders over two periods instead of one. Of course I'm just speculating, but this seems like a very deliberate strategy to maximize views(and thus subscriber retention) through strategic release timings of new content.
+
+
+#### Specific Show View Trajectories
+
+To finish up this post, I want to quickly look at a selection of shows to track their seasonal views across reports. 
+
+```{r, specific_shows_seasonal}
+breaking_bad_season <- shows_cleaned |> 
+  filter(series %in% c("Breaking Bad")) |> 
+  calc_table_data(season, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, season, report_date)
+
+suits_season <- shows_cleaned |> 
+  filter(startsWith(series,"Suits")) |> 
+  calc_table_data(season, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, season, report_date)
+
+stranger_things_season <- shows_cleaned |> 
+  filter(series %in% c("Stranger Things")) |> 
+  calc_table_data(season, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, season, report_date)
+
+# gtsave(breaking_bad_season, "breaking_bad_season.png")
+# gtsave(suits_season, "suits_season.png")
+# gtsave(stranger_things_season, "stranger_things_season.png")
+```
+
+![Breaking Bad View Trajectory](breaking_bad_season.png){.lightbox #tbl-breaking-bad-seasonal}
+
+![Suits View Trajectory](suits_season.png){.lightbox #tbl-suits-seasonal}
+
+![Stranger Things View Trajectory](stranger_things_season.png){.lightbox #tbl-stranger-things-seasonal}
+
+@tbl-breaking-bad-seasonal, @tbl-suits-seasonal, and @tbl-stranger-things-seasonal show the trajectory of views of Breaking Bad, Suits and Stranger Things respectively. You can see that within each show, the trajectory is quite consistent across the reports. Breaking Bad's views decline from season 1 to season 5, but within each season the pattern is consistent--views go up a little in the second report, up a bit more in the third and then are more or less flat in the 2025 report. Remember, each percent is the change from the previous report. That means with Suits, we see season 1 views drop ~40% in the first 2024 report, then another ~25% in the second half of 2024 and finally another ~23% in 2025. So we again get the ~65% drop in views from the first to the last report, but this time we can see it's happening at that level within each season too.
+
+It's worth noting that you can also swap this order and display the reports as your headers and then look at the change from season to season. It's easier to see the progression of views from season to season that way(e.g. Season 1 got 9.7 million views, then season 2 got 21% fewer than season 1, season 3 got 9% fewer than season 2, etc), but I don't think either presentation is the superior method so I just chose the one I found more interesting. The alternative tables are in the footnotes[^alt-tables1][^alt-tables2][^alt-tables3].
+
+[^alt-tables1]:![Breaking Bad View Trajectory, Alternate](breaking_bad_alt.png){.lightbox #tbl-breaking-bad-alt}
+
+[^alt-tables2]:![Suits View Trajectory, Alternate](suits_alt.png){.lightbox #tbl-suits-alt}
+
+[^alt-tables3]:![Stranger Things View Trajectory, Alternate](stranger_things_alt.png){.lightbox #tbl-stranger-things-alt}
+```{r, specific_shows_seasonal_alt}
+breaking_bad_alt <- shows_cleaned |> 
+  filter(series %in% c("Breaking Bad")) |> 
+  calc_table_data(report_date, season, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, report_date, season)
+
+suits_alt <- shows_cleaned |> 
+  filter(startsWith(series,"Suits")) |> 
+  calc_table_data(report_date, season, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, report_date, season)
+
+stranger_things_alt <- shows_cleaned |> 
+  filter(series %in% c("Stranger Things")) |> 
+  calc_table_data(report_date, season, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, report_date, season)
+
+# gtsave(breaking_bad_alt, "breaking_bad_alt.png")
+# gtsave(suits_alt, "suits_alt.png")
+# gtsave(stranger_things_alt, "stranger_things_alt.png")
+```
+
+
+Finally, we can examine a couple of the popular shows that had new seasons. 
+
+```{r, popular_shows_lift}
+virgin_river <- shows_cleaned |> 
+  filter(series %in% c("Virgin River")) |> 
+  calc_table_data(season, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, season, report_date)
+
+bridgerton <- shows_cleaned |> 
+  filter(startsWith(title, "Bridgerton: Season")) |> 
+  calc_table_data(season, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, season, report_date)
+
+squid_game <- shows_cleaned |> 
+  filter(startsWith(title, "Squid Game: Season")) |> 
+  calc_table_data(season, report_date, summary_func = sum) |> 
+  build_formatted_table(add_conditional_highlights = TRUE, season, report_date)
+
+# gtsave(virgin_river, "virgin_river.png")
+# gtsave(bridgerton, "bridgerton.png")
+# gtsave(squid_game, "squid_game.png")
+```
+
+![Virgin River View Trajectory](virgin_river.png){.lightbox #tbl-virgin-river}
+
+![Bridgerton View Trajectory](bridgerton.png){.lightbox #tbl-bridgerton}
+
+![Squid Game View Trajectory](squid_game.png){.lightbox #tbl-squid-game}
+
+@tbl-virgin-river, @tbl-bridgerton, and @tbl-squid-game show the lift effect of Virgin River, Bridgerton and Squid Game respectively. I think this is a beautiful way to illustrate how a new season pulls up all those older seasons when they release. For example, in @tbl-bridgerton we see that the release of the third season of Bridgerton increased the views of the first and second season by over 400% each. That's really useful information. And so is the fact that in the next report, all three seasons drop 70% off that peak. These tables are a nice easy way to display this information since I really don't care about the exact number of views. I just want to see what the lift is and so really honing in on the comparison to the last report for each season is precisely what I need. One final point, notice we can also see the back-to-back new season releases in @tbl-squid-game. While Bridgerton suffered your typical decline in views after a new release, Squid Game avoided that in the 2025 report by just continuing to release new content. Why don't all shows just constantly release new content!?
+
+
+## Wrapping Up
+
+Whew, this post was a little bit all over the place, but we got there in the end. We started by creating some cumulative viewing plots of the Netflix viewing data to explore 
+
+```{r}
+shows_cleaned |> 
+  ungroup() |> 
+  group_by(series, season, report_date) |> 
+  mutate(all_main = all(new_release != 'Maintenance')) |> 
+  ungroup() |> 
+  group_by(series) |> 
+  mutate(any_new = any(all_main == TRUE)) |> 
+  ungroup() |> 
+  summarise(total_views = sum(views, na.rm = TRUE), .by = c(report_date, any_new))
+```
+
 
 ```{r, eval = FALSE}
 multi_report_shows |> 
@@ -977,14 +1132,6 @@ multi_report_shows |>
   build_formatted_table(add_conditional_highlights = FALSE, season, report_date)
 
 
-boot_dist |> 
-  mutate(stat = exp(stat) -1 ) |> 
-  visualize() +
-  shade_p_value(obs_stat = exp(sample_median)-1, direction = 'one_sided') +
-  shade_confidence_interval(ci, alpha = .25)+
-  my_plot_theme()
-  
-  
 shows_cleaned |> 
   # filter(series %in% c("Bridgerton")) |>  
   filter(season != 'Limited Series') |> 
